@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <rect width="1200" height="700" fill="#f4f6f8"/>
+  <rect x="40" y="40" width="1120" height="620" rx="12" fill="#ffffff" stroke="#d8e1e8"/>
+  <text x="70" y="95" font-family="Segoe UI, sans-serif" font-size="34" fill="#1f2933" font-weight="700">Раздел «Программы»</text>
+  <rect x="70" y="130" width="420" height="44" rx="8" fill="#ffffff" stroke="#d8e1e8"/>
+  <rect x="510" y="130" width="180" height="44" rx="8" fill="#ffffff" stroke="#d8e1e8"/>
+  <rect x="710" y="130" width="160" height="44" rx="8" fill="#135d66"/>
+  <text x="760" y="158" font-family="Segoe UI, sans-serif" font-size="20" fill="#ffffff">Найти</text>
+  <rect x="70" y="200" width="1060" height="420" rx="8" fill="#ffffff" stroke="#d8e1e8"/>
+  <text x="90" y="238" font-family="Segoe UI, sans-serif" font-size="20" fill="#1f2933">Название</text>
+  <text x="500" y="238" font-family="Segoe UI, sans-serif" font-size="20" fill="#1f2933">Часы</text>
+  <text x="640" y="238" font-family="Segoe UI, sans-serif" font-size="20" fill="#1f2933">Период</text>
+  <text x="950" y="238" font-family="Segoe UI, sans-serif" font-size="20" fill="#1f2933">Статус</text>
+  <line x1="80" y1="255" x2="1120" y2="255" stroke="#d8e1e8"/>
+  <line x1="80" y1="310" x2="1120" y2="310" stroke="#d8e1e8"/>
+  <line x1="80" y1="365" x2="1120" y2="365" stroke="#d8e1e8"/>
+  <line x1="80" y1="420" x2="1120" y2="420" stroke="#d8e1e8"/>
+  <text x="90" y="290" font-family="Segoe UI, sans-serif" font-size="18" fill="#6b7a89">Заглушка для скриншота списка программ</text>
+</svg>

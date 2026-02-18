@@ -1,57 +1,124 @@
-# ИС центра повышения квалификации (КР)
+# ИС центра повышения квалификации (Курсовая работа)
 
-Учебный MVP-проект по курсовой работе.
+[![CI](https://github.com/mi4gang/cpk-is-kursovaya/actions/workflows/ci.yml/badge.svg)](https://github.com/mi4gang/cpk-is-kursovaya/actions/workflows/ci.yml)
+
+Учебный MVP-проект информационной системы для центра повышения квалификации.
+
+## Быстрые ссылки
+- Онлайн-демо: будет добавлено после деплоя на Render.
+- GitHub: [https://github.com/mi4gang/cpk-is-kursovaya](https://github.com/mi4gang/cpk-is-kursovaya)
+- Требования: `docs/spec/01_requirements_spec.md`
+- Привязка к критериям: `docs/spec/criteria_mapping.md`
+
+## Цель проекта
+Собрать формально корректную и устойчивую ИС для защиты курсовой работы: учет программ, заявок, оплат, аттестаций и удостоверений в единой ролевой системе.
 
 ## Стек
-- Java 17+
+- Java 17
 - Spring Boot 3.5
 - Spring Security
 - Spring Data JPA (Hibernate)
-- PostgreSQL
 - Thymeleaf
+- PostgreSQL (prod/demo)
+- H2 (local default)
+
+## Роли и процесс
+Роли:
+- `ADMIN`
+- `METHODIST`
+- `TEACHER`
+- `STUDENT`
+
+Линейный бизнес-процесс:
+- `Program -> Application -> Payment -> AssessmentResult -> Certificate`
 
 ## Что реализовано
-- Авторизация и ролевой доступ (`ADMIN`, `METHODIST`, `TEACHER`, `STUDENT`).
-- CRUD для `Program`, `Application`, `Payment`, `AssessmentResult`, `Certificate`.
-- Поиск и сортировка в ключевых разделах.
-- Статистика на главной (слушатели, активные программы, сумма оплат).
+- Ролевая авторизация и разграничение доступа.
+- CRUD для ключевых сущностей.
+- Поиск по ФИО слушателя и названию программы.
+- Базовая сортировка в списках.
+- Дашборд со статистикой (слушатели, активные программы, сумма оплат).
+- Единая обработка ошибок (`ControllerAdvice`, `404`, `500`).
 - Страница `Об авторе`.
-- Единая обработка ошибок (`ControllerAdvice` + страницы `404/500`).
 
-## Быстрый старт
-1. Запустить приложение (скрипт сам использует локальный JDK из `.tools`):
+## Запуск локально (рекомендуется для защиты)
+1. Запуск:
    ```bash
    ./scripts/start-local.sh
    ```
-2. Проверить статус:
+2. Проверка статуса:
    ```bash
    ./scripts/status-local.sh
    ```
-3. Открыть [http://localhost:8080](http://localhost:8080).
-4. Остановить:
+3. Открыть `http://localhost:8080`.
+4. Остановка:
    ```bash
    ./scripts/stop-local.sh
    ```
 
-## Режим БД
-- По умолчанию используется встроенная H2 (in-memory), чтобы проект запускался сразу.
-- Для PostgreSQL перед запуском задайте переменные:
-  - `DB_URL=jdbc:postgresql://localhost:5432/cpk_is`
-  - `DB_USERNAME=postgres`
-  - `DB_PASSWORD=postgres`
-  - `DB_DRIVER=org.postgresql.Driver`
+По умолчанию используется H2 in-memory, поэтому старт без внешней БД.
 
-## Демо-пользователи
+## Запуск с PostgreSQL
+1. Поднять PostgreSQL:
+   ```bash
+   docker compose up -d
+   ```
+2. Перед запуском приложения задать переменные:
+   ```bash
+   export DB_URL=jdbc:postgresql://localhost:5432/cpk_is
+   export DB_USERNAME=postgres
+   export DB_PASSWORD=postgres
+   export DB_DRIVER=org.postgresql.Driver
+   ```
+3. Запустить приложение:
+   ```bash
+   ./scripts/start-local.sh
+   ```
+
+## Демо-аккаунты
 - `admin / admin123`
 - `methodist / method123`
 - `teacher / teacher123`
 - `student / student123`
 
-## Документы
-- Спецификация: `docs/spec/01_requirements_spec.md`
-- Привязка к критериям: `docs/spec/criteria_mapping.md`
-- Диаграммы: `docs/diagrams/*.drawio`
-- Черновик ПЗ: `docs/pz/Пояснительная_записка_черновик.md`
-- DOCX ПЗ: `docs/pz/Пояснительная_записка_черновик.docx`
-- Презентация (структура): `docs/presentation/presentation_outline.md`
+## Структура репозитория
+```text
+src/                     # Код приложения
+scripts/                 # Локальные операционные скрипты
+docs/spec/               # Спецификация и маппинг критериев
+docs/diagrams/           # IDEF/UML/DFD/IDEF1X
+docs/pz/                 # Пояснительная записка (черновик)
+docs/presentation/       # Презентация и скрипт защиты
+docs/screenshots/        # Скриншоты для README и демонстрации
+```
+
+## Визуальные материалы
+> Ниже временные заглушки структуры. Перед финальной сдачей заменить на реальные скриншоты из работающей системы.
+
+![Главная](docs/screenshots/dashboard-overview.svg)
+![Программы](docs/screenshots/programs-list.svg)
+![Заявки](docs/screenshots/applications-list.svg)
+![Поток процесса](docs/screenshots/e2e-flow.svg)
+
+## Документация
+- Диаграммы: `docs/diagrams/`
+- ПЗ (md): `docs/pz/Пояснительная_записка_черновик.md`
+- ПЗ (docx): `docs/pz/Пояснительная_записка_черновик.docx`
+- Презентация: `docs/presentation/КР_Презентация_ЦПК.pptx`
 - Скрипт защиты: `docs/presentation/defense_script.md`
+- GitHub/release checklist: `docs/github/release_checklist.md`
+
+## Как защищать (короткий demo-flow 3-5 минут)
+1. Кратко обозначить цель системы и роли.
+2. Войти под `admin`, показать дашборд и статистику.
+3. Пройти цепочку: программа -> заявка -> оплата -> аттестация -> удостоверение.
+4. Показать ролевые ограничения на одном из экранов.
+5. Вызвать контролируемую ошибку и показать единую страницу обработки.
+6. Завершить ссылкой на GitHub и разделом с диаграммами/ПЗ.
+
+## GitHub release
+- Целевой тег для защиты: `v1.0-kursovaya`
+- Скрипт создания тега:
+  ```bash
+  ./scripts/tag-release.sh
+  ```
