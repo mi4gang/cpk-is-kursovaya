@@ -9,6 +9,7 @@
 - GitHub: [https://github.com/mi4gang/cpk-is-kursovaya](https://github.com/mi4gang/cpk-is-kursovaya)
 - Требования: `docs/spec/01_requirements_spec.md`
 - Привязка к критериям: `docs/spec/criteria_mapping.md`
+- Деплой в Render: `docs/deploy/render.md`
 
 ## Цель проекта
 Собрать формально корректную и устойчивую ИС для защиты курсовой работы: учет программ, заявок, оплат, аттестаций и удостоверений в единой ролевой системе.
@@ -74,6 +75,14 @@
    ```bash
    ./scripts/start-local.sh
    ```
+
+## Онлайн-деплой (Render)
+В репозитории уже есть `render.yaml` и `Dockerfile`.
+
+Сценарий:
+1. В Render создать `Blueprint` из этого репозитория.
+2. Применить конфигурацию из `render.yaml`.
+3. Получить URL и открыть `/login`.
 
 ## Демо-аккаунты
 - `admin / admin123`

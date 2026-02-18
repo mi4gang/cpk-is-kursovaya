@@ -1,0 +1,9 @@
+.git
+.github
+target
+.tools
+.run
+docs/screenshots
+reference
+node_modules
+*.log
