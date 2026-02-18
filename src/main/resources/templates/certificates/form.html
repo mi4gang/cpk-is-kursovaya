@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Удостоверение | ЦПК ИС</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: topnav}"></div>
+<main class="container">
+    <h1 th:text="${certificate.id == null ? 'Новое удостоверение' : 'Редактирование удостоверения'}"></h1>
+
+    <form th:action="@{/certificates/save}" th:object="${certificate}" method="post" class="card form-grid">
+        <input type="hidden" th:field="*{id}">
+
+        <label>Номер удостоверения
+            <input type="text" th:field="*{number}" required>
+            <small class="err" th:if="${#fields.hasErrors('number')}" th:errors="*{number}"></small>
+        </label>
+
+        <label>Заявка
+            <select th:field="*{application}" required>
+                <option th:each="a : ${applications}" th:value="${a.id}" th:text="${a.id + ' - ' + a.listenerFullName}"></option>
+            </select>
+        </label>
+
+        <label>Дата выдачи
+            <input type="date" th:field="*{issueDate}" required>
+        </label>
+
+        <label>Статус
+            <select th:field="*{status}">
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+            </select>
+        </label>
+
+        <div class="row">
+            <button type="submit">Сохранить</button>
+            <a class="btn" th:href="@{/certificates}">Отмена</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Программа | ЦПК ИС</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: topnav}"></div>
+<main class="container">
+    <h1 th:text="${program.id == null ? 'Новая программа' : 'Редактирование программы'}"></h1>
+
+    <form th:action="@{/programs/save}" th:object="${program}" method="post" class="card form-grid">
+        <input type="hidden" th:field="*{id}">
+
+        <label>Название
+            <input type="text" th:field="*{title}" required>
+            <small class="err" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+        </label>
+
+        <label>Описание
+            <textarea th:field="*{description}" rows="4"></textarea>
+        </label>
+
+        <label>Продолжительность (часы)
+            <input type="number" th:field="*{durationHours}" min="1" required>
+            <small class="err" th:if="${#fields.hasErrors('durationHours')}" th:errors="*{durationHours}"></small>
+        </label>
+
+        <label>Дата начала
+            <input type="date" th:field="*{startDate}" required>
+        </label>
+
+        <label>Дата окончания
+            <input type="date" th:field="*{endDate}" required>
+            <small class="err" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></small>
+        </label>
+
+        <label class="check">
+            <input type="checkbox" th:field="*{active}"> Активная программа
+        </label>
+
+        <div class="row">
+            <button type="submit">Сохранить</button>
+            <a class="btn" th:href="@{/programs}">Отмена</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

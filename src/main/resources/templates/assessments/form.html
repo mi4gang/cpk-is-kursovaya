@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аттестация | ЦПК ИС</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: topnav}"></div>
+<main class="container">
+    <h1 th:text="${assessment.id == null ? 'Новый результат аттестации' : 'Редактирование аттестации'}"></h1>
+
+    <form th:action="@{/assessments/save}" th:object="${assessment}" method="post" class="card form-grid">
+        <input type="hidden" th:field="*{id}">
+
+        <label>Заявка
+            <select th:field="*{application}" required>
+                <option th:each="a : ${applications}" th:value="${a.id}" th:text="${a.id + ' - ' + a.listenerFullName}"></option>
+            </select>
+        </label>
+
+        <label>Балл (0-100)
+            <input type="number" min="0" max="100" th:field="*{score}" required>
+        </label>
+
+        <label>Статус
+            <select th:field="*{status}">
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+            </select>
+        </label>
+
+        <label>Дата результата
+            <input type="date" th:field="*{resultDate}" required>
+        </label>
+
+        <label>Комментарий
+            <textarea th:field="*{comment}" rows="4"></textarea>
+        </label>
+
+        <div class="row">
+            <button type="submit">Сохранить</button>
+            <a class="btn" th:href="@{/assessments}">Отмена</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

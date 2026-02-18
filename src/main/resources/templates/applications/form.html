@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявка | ЦПК ИС</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: topnav}"></div>
+<main class="container">
+    <h1 th:text="${application.id == null ? 'Новая заявка' : 'Редактирование заявки'}"></h1>
+
+    <form th:action="@{/applications/save}" th:object="${application}" method="post" class="card form-grid">
+        <input type="hidden" th:field="*{id}">
+
+        <label>ФИО слушателя
+            <input type="text" th:field="*{listenerFullName}" required>
+            <small class="err" th:if="${#fields.hasErrors('listenerFullName')}" th:errors="*{listenerFullName}"></small>
+        </label>
+
+        <label>Email
+            <input type="email" th:field="*{listenerEmail}" required>
+            <small class="err" th:if="${#fields.hasErrors('listenerEmail')}" th:errors="*{listenerEmail}"></small>
+        </label>
+
+        <label>Телефон
+            <input type="text" th:field="*{listenerPhone}" required>
+        </label>
+
+        <label>Дата заявки
+            <input type="date" th:field="*{applicationDate}" required>
+        </label>
+
+        <label>Программа
+            <select th:field="*{program}" required>
+                <option th:each="p : ${programs}" th:value="${p.id}" th:text="${p.title}"></option>
+            </select>
+        </label>
+
+        <label>Статус
+            <select th:field="*{status}">
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+            </select>
+        </label>
+
+        <div class="row">
+            <button type="submit">Сохранить</button>
+            <a class="btn" th:href="@{/applications}">Отмена</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

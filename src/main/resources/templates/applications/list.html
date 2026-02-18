@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявки | ЦПК ИС</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: topnav}"></div>
+<main class="container">
+    <h1>Заявки слушателей</h1>
+    <form method="get" class="row">
+        <input type="text" name="q" th:value="${q}" placeholder="Поиск по ФИО">
+        <select name="sort">
+            <option value="applicationDate" th:selected="${sort == 'applicationDate'}">Дата заявки</option>
+            <option value="listenerFullName" th:selected="${sort == 'listenerFullName'}">ФИО</option>
+            <option value="status" th:selected="${sort == 'status'}">Статус</option>
+        </select>
+        <button type="submit">Применить</button>
+        <a class="btn" th:href="@{/applications/new}" sec:authorize="hasAnyRole('ADMIN','METHODIST','STUDENT')">+ Новая заявка</a>
+    </form>
+
+    <table>
+        <thead>
+        <tr><th>ID</th><th>Слушатель</th><th>Программа</th><th>Дата</th><th>Статус</th><th>Действия</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="a : ${applications}">
+            <td th:text="${a.id}"></td>
+            <td th:text="${a.listenerFullName}"></td>
+            <td th:text="${a.program.title}"></td>
+            <td th:text="${a.applicationDate}"></td>
+            <td th:text="${a.status}"></td>
+            <td class="actions" sec:authorize="hasAnyRole('ADMIN','METHODIST')">
+                <a th:href="@{/applications/{id}/edit(id=${a.id})}">Редактировать</a>
+                <form th:action="@{/applications/{id}/delete(id=${a.id})}" method="post" class="inline">
+                    <button type="submit">Удалить</button>
+                </form>
+            </td>
+            <td class="actions" sec:authorize="!hasAnyRole('ADMIN','METHODIST')">Только просмотр</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

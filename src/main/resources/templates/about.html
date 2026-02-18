@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Об авторе | ЦПК ИС</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: topnav}"></div>
+<main class="container">
+    <h1>Об авторе</h1>
+    <section class="card">
+        <p><strong>ФИО:</strong> [Укажите ФИО]</p>
+        <p><strong>Группа / учебное заведение:</strong> [Укажите группу и вуз]</p>
+        <p><strong>Контакты:</strong> [Укажите e-mail/телефон]</p>
+        <p><strong>Опыт:</strong> Управление IT-инфраструктурой в коммерции</p>
+        <p><strong>Даты проекта:</strong> 01.10.2025 - 10.12.2025</p>
+    </section>
+</main>
+</body>
+</html>

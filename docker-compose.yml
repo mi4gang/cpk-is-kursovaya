@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: cpk_is_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cpk_is
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - cpk_is_data:/var/lib/postgresql/data
+
+volumes:
+  cpk_is_data:

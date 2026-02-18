@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<body>
+<header th:fragment="topnav" class="topnav">
+    <div class="container nav-row">
+        <a class="brand" th:href="@{/}">ЦПК ИС</a>
+        <nav class="menu" sec:authorize="isAuthenticated()">
+            <a th:href="@{/programs}">Программы</a>
+            <a th:href="@{/applications}">Заявки</a>
+            <a th:href="@{/payments}">Оплаты</a>
+            <a th:href="@{/assessments}">Аттестация</a>
+            <a th:href="@{/certificates}">Удостоверения</a>
+            <a th:href="@{/about}">Об авторе</a>
+        </nav>
+        <div class="menu" sec:authorize="isAuthenticated()">
+            <span sec:authentication="name"></span>
+            <form th:action="@{/logout}" method="post" class="inline">
+                <button type="submit">Выйти</button>
+            </form>
+        </div>
+    </div>
+</header>
+</body>
+</html>

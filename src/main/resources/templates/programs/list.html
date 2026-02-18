@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Программы | ЦПК ИС</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: topnav}"></div>
+<main class="container">
+    <h1>Программы</h1>
+    <form method="get" class="row">
+        <input type="text" name="q" th:value="${q}" placeholder="Поиск по названию">
+        <select name="sort">
+            <option value="title" th:selected="${sort == 'title'}">Название</option>
+            <option value="startDate" th:selected="${sort == 'startDate'}">Дата начала</option>
+            <option value="endDate" th:selected="${sort == 'endDate'}">Дата окончания</option>
+            <option value="durationHours" th:selected="${sort == 'durationHours'}">Часы</option>
+        </select>
+        <button type="submit">Применить</button>
+        <a class="btn" th:href="@{/programs/new}" sec:authorize="hasAnyRole('ADMIN','METHODIST')">+ Добавить</a>
+    </form>
+
+    <table>
+        <thead>
+        <tr><th>ID</th><th>Название</th><th>Часы</th><th>Период</th><th>Активна</th><th>Действия</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${programs}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.title}"></td>
+            <td th:text="${p.durationHours}"></td>
+            <td th:text="${p.startDate + ' - ' + p.endDate}"></td>
+            <td th:text="${p.active ? 'Да' : 'Нет'}"></td>
+            <td class="actions" sec:authorize="hasAnyRole('ADMIN','METHODIST')">
+                <a th:href="@{/programs/{id}/edit(id=${p.id})}">Редактировать</a>
+                <form th:action="@{/programs/{id}/delete(id=${p.id})}" method="post" class="inline">
+                    <button type="submit">Удалить</button>
+                </form>
+            </td>
+            <td class="actions" sec:authorize="!hasAnyRole('ADMIN','METHODIST')">Только просмотр</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

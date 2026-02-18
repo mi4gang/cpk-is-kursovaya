@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ошибка | ЦПК ИС</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <section class="card">
+        <h1>Ошибка</h1>
+        <p th:text="${message != null ? message : 'Произошла ошибка. Проверьте данные и вернитесь назад.'}"></p>
+        <details>
+            <summary>Технические детали</summary>
+            <p th:text="${details}"></p>
+        </details>
+        <p><a th:href="@{/}">Вернуться на главную</a></p>
+    </section>
+</main>
+</body>
+</html>

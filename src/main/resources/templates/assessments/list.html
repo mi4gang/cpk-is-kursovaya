@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аттестация | ЦПК ИС</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: topnav}"></div>
+<main class="container">
+    <h1>Результаты аттестации</h1>
+    <p><a class="btn" th:href="@{/assessments/new}" sec:authorize="hasAnyRole('ADMIN','TEACHER')">+ Добавить результат</a></p>
+
+    <table>
+        <thead>
+        <tr><th>ID</th><th>Заявка</th><th>Баллы</th><th>Статус</th><th>Дата</th><th>Действия</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="a : ${assessments}">
+            <td th:text="${a.id}"></td>
+            <td th:text="${a.application.id}"></td>
+            <td th:text="${a.score}"></td>
+            <td th:text="${a.status}"></td>
+            <td th:text="${a.resultDate}"></td>
+            <td class="actions" sec:authorize="hasAnyRole('ADMIN','TEACHER')">
+                <a th:href="@{/assessments/{id}/edit(id=${a.id})}">Редактировать</a>
+                <form th:action="@{/assessments/{id}/delete(id=${a.id})}" method="post" class="inline">
+                    <button type="submit">Удалить</button>
+                </form>
+            </td>
+            <td class="actions" sec:authorize="!hasAnyRole('ADMIN','TEACHER')">Только просмотр</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Удостоверения | ЦПК ИС</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: topnav}"></div>
+<main class="container">
+    <h1>Удостоверения</h1>
+    <p><a class="btn" th:href="@{/certificates/new}" sec:authorize="hasAnyRole('ADMIN','METHODIST')">+ Добавить удостоверение</a></p>
+
+    <table>
+        <thead>
+        <tr><th>ID</th><th>Номер</th><th>Заявка</th><th>Дата выдачи</th><th>Статус</th><th>Действия</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="c : ${certificates}">
+            <td th:text="${c.id}"></td>
+            <td th:text="${c.number}"></td>
+            <td th:text="${c.application.id}"></td>
+            <td th:text="${c.issueDate}"></td>
+            <td th:text="${c.status}"></td>
+            <td class="actions" sec:authorize="hasAnyRole('ADMIN','METHODIST')">
+                <a th:href="@{/certificates/{id}/edit(id=${c.id})}">Редактировать</a>
+                <form th:action="@{/certificates/{id}/delete(id=${c.id})}" method="post" class="inline">
+                    <button type="submit">Удалить</button>
+                </form>
+            </td>
+            <td class="actions" sec:authorize="!hasAnyRole('ADMIN','METHODIST')">Только просмотр</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>
