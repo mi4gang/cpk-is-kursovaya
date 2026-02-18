@@ -1,0 +1,20 @@
+<mxfile host="app.diagrams.net" modified="2026-02-18T17:11:10.000Z" agent="Codex" version="24.7.17">
+  <diagram id="sequence" name="UML Sequence">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Слушатель" style="shape=umlLifeline;html=1;" vertex="1" parent="1"><mxGeometry x="140" y="120" width="120" height="760" as="geometry"/></mxCell>
+        <mxCell id="3" value="Web UI" style="shape=umlLifeline;html=1;" vertex="1" parent="1"><mxGeometry x="420" y="120" width="120" height="760" as="geometry"/></mxCell>
+        <mxCell id="4" value="ApplicationController" style="shape=umlLifeline;html=1;" vertex="1" parent="1"><mxGeometry x="700" y="120" width="180" height="760" as="geometry"/></mxCell>
+        <mxCell id="5" value="Repository/DB" style="shape=umlLifeline;html=1;" vertex="1" parent="1"><mxGeometry x="1060" y="120" width="140" height="760" as="geometry"/></mxCell>
+        <mxCell id="6" value="1: submitApplication()" style="endArrow=block;html=1;" edge="1" source="2" target="3" parent="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="460" y="240"/></Array></mxGeometry></mxCell>
+        <mxCell id="7" value="2: POST /applications/save" style="endArrow=block;html=1;" edge="1" source="3" target="4" parent="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="760" y="320"/></Array></mxGeometry></mxCell>
+        <mxCell id="8" value="3: save(application)" style="endArrow=block;html=1;" edge="1" source="4" target="5" parent="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1120" y="400"/></Array></mxGeometry></mxCell>
+        <mxCell id="9" value="4: OK" style="endArrow=open;dashed=1;html=1;" edge="1" source="5" target="4" parent="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="880" y="480"/></Array></mxGeometry></mxCell>
+        <mxCell id="10" value="5: redirect /applications" style="endArrow=open;dashed=1;html=1;" edge="1" source="4" target="3" parent="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="560" y="560"/></Array></mxGeometry></mxCell>
+        <mxCell id="11" value="6: show success" style="endArrow=open;dashed=1;html=1;" edge="1" source="3" target="2" parent="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="260" y="640"/></Array></mxGeometry></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

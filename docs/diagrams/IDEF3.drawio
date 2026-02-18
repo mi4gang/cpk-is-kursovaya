@@ -1,0 +1,19 @@
+<mxfile host="app.diagrams.net" modified="2026-02-18T17:10:30.000Z" agent="Codex" version="24.7.17">
+  <diagram id="idef3" name="IDEF3">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="UOB1 Регистрация программы" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="100" y="300" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="3" value="UOB2 Подача заявки" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="380" y="300" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="4" value="UOB3 Оплата" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="660" y="300" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="5" value="UOB4 Аттестация" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="940" y="300" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="6" value="UOB5 Выдача удостоверения" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="1220" y="300" width="260" height="80" as="geometry"/></mxCell>
+        <mxCell id="7" style="endArrow=classic;html=1;" edge="1" source="2" target="3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="8" style="endArrow=classic;html=1;" edge="1" source="3" target="4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="9" style="endArrow=classic;html=1;" edge="1" source="4" target="5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="10" style="endArrow=classic;html=1;" edge="1" source="5" target="6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

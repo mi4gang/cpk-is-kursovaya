@@ -1,0 +1,17 @@
+<mxfile host="app.diagrams.net" modified="2026-02-18T17:10:20.000Z" agent="Codex" version="24.7.17">
+  <diagram id="idef0a2" name="IDEF0 A2 Decomposition">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="A2.1 Прием заявки" style="whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="260" y="320" width="230" height="100" as="geometry"/></mxCell>
+        <mxCell id="3" value="A2.2 Проверка данных" style="whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="560" y="320" width="230" height="100" as="geometry"/></mxCell>
+        <mxCell id="4" value="A2.3 Подтверждение заявки" style="whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="860" y="320" width="230" height="100" as="geometry"/></mxCell>
+        <mxCell id="5" value="" style="endArrow=classic;html=1;" edge="1" source="2" target="3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="6" value="" style="endArrow=classic;html=1;" edge="1" source="3" target="4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="7" value="Вход: данные слушателя" style="text;html=1;" vertex="1" parent="1"><mxGeometry x="120" y="350" width="120" height="30" as="geometry"/></mxCell>
+        <mxCell id="8" value="Выход: подтвержденная заявка" style="text;html=1;" vertex="1" parent="1"><mxGeometry x="1120" y="350" width="180" height="30" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
