@@ -13,6 +13,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "certificates")
@@ -27,11 +28,15 @@ public class Certificate {
     private String number;
 
     @Column(nullable = false)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate issueDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CertificateStatus status;
+
+    @Column(length = 1000)
+    private String documentLink;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id", nullable = false, unique = true)
@@ -67,6 +72,14 @@ public class Certificate {
 
     public void setStatus(CertificateStatus status) {
         this.status = status;
+    }
+
+    public String getDocumentLink() {
+        return documentLink;
+    }
+
+    public void setDocumentLink(String documentLink) {
+        this.documentLink = documentLink;
     }
 
     public Application getApplication() {

@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "assessment_results")
@@ -33,6 +34,7 @@ public class AssessmentResult {
     private AssessmentStatus status;
 
     @Column(nullable = false)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate resultDate;
 
     @Column(length = 1000)

@@ -15,6 +15,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "payments")
@@ -30,6 +31,7 @@ public class Payment {
     private BigDecimal amount;
 
     @Column(nullable = false)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate paymentDate;
 
     @Enumerated(EnumType.STRING)
