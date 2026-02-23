@@ -17,6 +17,18 @@ services:
         fromDatabase:
           name: cpk-is-db
           property: connectionString
+      - key: DB_HOST
+        fromDatabase:
+          name: cpk-is-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cpk-is-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: cpk-is-db
+          property: database
       - key: DB_USERNAME
         fromDatabase:
           name: cpk-is-db
