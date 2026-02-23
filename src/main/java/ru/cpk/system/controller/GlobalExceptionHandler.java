@@ -2,6 +2,7 @@ package ru.cpk.system.controller;
 
 import jakarta.validation.ConstraintViolationException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
@@ -33,10 +34,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleAccessDenied(AccessDeniedException ex,
                                      Authentication authentication,
                                      HttpServletRequest request,
+                                     HttpServletResponse response,
                                      Model model) {
         if (authentication == null
             || !authentication.isAuthenticated()
@@ -45,6 +46,7 @@ public class GlobalExceptionHandler {
             String returnTo = request.getRequestURI() + (query != null ? "?" + query : "");
             return "redirect:/login?next=" + URLEncoder.encode(returnTo, StandardCharsets.UTF_8);
         }
+        response.setStatus(HttpStatus.FORBIDDEN.value());
         log.warn("Access denied handled", ex);
         model.addAttribute("message", "Недостаточно прав для выполнения операции.");
         return "error/general";
