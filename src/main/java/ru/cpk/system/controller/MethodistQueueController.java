@@ -13,7 +13,6 @@ import ru.cpk.system.model.AccessStatus;
 import ru.cpk.system.model.Application;
 import ru.cpk.system.model.ApplicationStatus;
 import ru.cpk.system.model.DocumentStatus;
-import ru.cpk.system.model.PaymentStatus;
 import ru.cpk.system.model.RoleName;
 import ru.cpk.system.model.User;
 import ru.cpk.system.repository.ApplicationRepository;
@@ -49,16 +48,11 @@ public class MethodistQueueController {
         var inTrainingQueue = refreshTrials(applicationRepository.findByAccessStatusAndStatusNotOrderByApplicationDateAsc(
             AccessStatus.FULL_ACCESS, ApplicationStatus.COMPLETED));
         var certificateQueue = refreshTrials(applicationRepository.findReadyForCertificate());
-        var trialQueue = accessQueue.stream()
-            .filter(a -> a.getAccessStatus() == AccessStatus.TRIAL_ACCESS)
-            .filter(a -> a.getPayment() == null || a.getPayment().getStatus() != PaymentStatus.PAID)
-            .toList();
 
         model.addAttribute("docsQueue", docsQueue);
         model.addAttribute("accessQueue", accessQueue);
         model.addAttribute("inTrainingQueue", inTrainingQueue);
         model.addAttribute("certificateQueue", certificateQueue);
-        model.addAttribute("trialQueue", trialQueue);
         model.addAttribute("teachers", userRepository.findByRoleOrderByFullNameAsc(RoleName.TEACHER));
 
         model.addAttribute("docQueueCount", statsService.pendingDocumentQueue());

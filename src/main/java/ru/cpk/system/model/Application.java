@@ -59,6 +59,9 @@ public class Application {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate trialEndsAt;
 
+    @Column
+    private Boolean trialWasUsed = false;
+
     @Min(0)
     @Max(100)
     @Column(nullable = false)
@@ -161,6 +164,14 @@ public class Application {
 
     public void setTrialEndsAt(LocalDate trialEndsAt) {
         this.trialEndsAt = trialEndsAt;
+    }
+
+    public Boolean getTrialWasUsed() {
+        return trialWasUsed;
+    }
+
+    public void setTrialWasUsed(Boolean trialWasUsed) {
+        this.trialWasUsed = trialWasUsed;
     }
 
     public int getProgressPercent() {

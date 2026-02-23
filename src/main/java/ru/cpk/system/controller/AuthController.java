@@ -3,6 +3,8 @@ package ru.cpk.system.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +29,12 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(Authentication authentication) {
+        if (authentication != null
+            && authentication.isAuthenticated()
+            && !(authentication instanceof AnonymousAuthenticationToken)) {
+            return "redirect:/dashboard";
+        }
         return "login";
     }
 

@@ -1,10 +1,15 @@
 package ru.cpk.system.controller;
 
 import jakarta.validation.ConstraintViolationException;
+import jakarta.servlet.http.HttpServletRequest;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -29,7 +34,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String handleAccessDenied(AccessDeniedException ex, Model model) {
+    public String handleAccessDenied(AccessDeniedException ex,
+                                     Authentication authentication,
+                                     HttpServletRequest request,
+                                     Model model) {
+        if (authentication == null
+            || !authentication.isAuthenticated()
+            || authentication instanceof AnonymousAuthenticationToken) {
+            String query = request.getQueryString();
+            String returnTo = request.getRequestURI() + (query != null ? "?" + query : "");
+            return "redirect:/login?next=" + URLEncoder.encode(returnTo, StandardCharsets.UTF_8);
+        }
         log.warn("Access denied handled", ex);
         model.addAttribute("message", "Недостаточно прав для выполнения операции.");
         return "error/general";

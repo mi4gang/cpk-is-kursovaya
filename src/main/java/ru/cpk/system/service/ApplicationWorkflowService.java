@@ -42,6 +42,7 @@ public class ApplicationWorkflowService {
         application.setDocStatus(DocumentStatus.PENDING);
         application.setAccessStatus(AccessStatus.NO_ACCESS);
         application.setTrialEndsAt(null);
+        application.setTrialWasUsed(false);
         application.setAssignedTeacher(null);
         application.setProgressPercent(0);
         application.setTeacherCompleted(false);
@@ -83,7 +84,12 @@ public class ApplicationWorkflowService {
         }
         current.setAccessStatus(AccessStatus.TRIAL_ACCESS);
         current.setStatus(ApplicationStatus.TRIAL_ACCESS);
-        current.setTrialEndsAt(LocalDate.now().plusDays(TRIAL_DAYS));
+        LocalDate today = LocalDate.now();
+        LocalDate baseDate = current.getTrialEndsAt() != null && current.getTrialEndsAt().isAfter(today)
+            ? current.getTrialEndsAt()
+            : today;
+        current.setTrialEndsAt(baseDate.plusDays(TRIAL_DAYS));
+        current.setTrialWasUsed(true);
         return applicationRepository.save(current);
     }
 
@@ -213,10 +219,11 @@ public class ApplicationWorkflowService {
             && !isPaymentPaid(application)) {
             application.setAccessStatus(AccessStatus.NO_ACCESS);
             application.setTrialEndsAt(null);
-            if (application.getDocStatus() == DocumentStatus.APPROVED
-                && application.getStatus() != ApplicationStatus.REJECTED
+            application.setAssignedTeacher(null);
+            application.setDocStatus(DocumentStatus.PENDING);
+            if (application.getStatus() != ApplicationStatus.REJECTED
                 && application.getStatus() != ApplicationStatus.COMPLETED) {
-                application.setStatus(ApplicationStatus.DOCS_APPROVED);
+                application.setStatus(ApplicationStatus.SUBMITTED);
             }
             return applicationRepository.save(application);
         }

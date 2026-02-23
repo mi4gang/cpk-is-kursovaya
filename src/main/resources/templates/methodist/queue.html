@@ -58,6 +58,9 @@
                     <td class="px-4 py-3">
                         <p class="font-semibold" th:text="${a.listenerFullName}"></p>
                         <p class="text-xs text-slate-500" th:text="${'ID: ' + a.id}"></p>
+                        <p th:if="${a.trialWasUsed}" class="mt-1 inline-flex px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-semibold">
+                            Trial уже использовался
+                        </p>
                     </td>
                     <td class="px-4 py-3" th:text="${a.program.title}"></td>
                     <td class="px-4 py-3"><span class="px-2 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">Ожидает</span></td>
@@ -143,41 +146,13 @@
                                 Открыть 3 дня
                             </button>
                         </form>
+                        <div th:if="${a.trialWasUsed}" class="mt-2 text-xs text-indigo-700">
+                            Пробный доступ уже открывался по этой заявке.
+                        </div>
                         <span th:if="${a.payment != null and a.payment.status.name() == 'PAID'}" class="text-xs text-slate-500">После оплаты trial не применяется</span>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(accessQueue)}"><td colspan="7" class="px-4 py-8 text-center text-slate-500">Очередь пуста.</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-        <div class="px-5 py-4 border-b border-slate-100"><h2 class="font-semibold text-lg">Пробный доступ (3 дня)</h2></div>
-        <div class="overflow-auto">
-            <table class="w-full min-w-[920px] text-sm">
-                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
-                <tr>
-                    <th class="px-4 py-3 text-left">Слушатель</th>
-                    <th class="px-4 py-3 text-left">Программа</th>
-                    <th class="px-4 py-3 text-left">Преподаватель</th>
-                    <th class="px-4 py-3 text-left">Оплата</th>
-                    <th class="px-4 py-3 text-left">Пробный доступ до</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="a : ${trialQueue}" class="border-t border-slate-100">
-                    <td class="px-4 py-3" th:text="${a.listenerFullName}"></td>
-                    <td class="px-4 py-3" th:text="${a.program.title}"></td>
-                    <td class="px-4 py-3" th:text="${a.assignedTeacher != null ? a.assignedTeacher.fullName : 'Не назначен'}"></td>
-                    <td class="px-4 py-3">
-                        <span th:if="${a.payment != null and a.payment.status.name() == 'PAID'}" class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">Оплачено</span>
-                        <span th:if="${a.payment == null or a.payment.status.name() != 'PAID'}" class="px-2 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold"
-                              th:text="${a.payment != null ? a.payment.status.label : 'Нет оплаты'}"></span>
-                    </td>
-                    <td class="px-4 py-3" th:text="${a.trialEndsAt != null ? a.trialEndsAt : '—'}"></td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(trialQueue)}"><td colspan="5" class="px-4 py-8 text-center text-slate-500">Нет активного trial без оплаты.</td></tr>
                 </tbody>
             </table>
         </div>

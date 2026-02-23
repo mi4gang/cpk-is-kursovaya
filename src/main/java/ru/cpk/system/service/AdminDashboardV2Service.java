@@ -182,7 +182,7 @@ public class AdminDashboardV2Service {
         Application application = applicationRepository.findById(applicationId)
             .orElseThrow(() -> new IllegalArgumentException("Кейс не найден"));
         LocalDate today = LocalDate.now();
-        int ageDays = (int) Math.max(0, ChronoUnit.DAYS.between(application.getApplicationDate(), today));
+        int ageDays = (int) Math.max(0, ChronoUnit.DAYS.between(safeApplicationDate(application), today));
         String resolvedQueueType = resolveQueueType(application);
         String queueType = resolvedQueueType != null
             ? resolvedQueueType
@@ -618,7 +618,7 @@ public class AdminDashboardV2Service {
             if (queueType == null) {
                 continue;
             }
-            int ageDays = (int) Math.max(0, ChronoUnit.DAYS.between(application.getApplicationDate(), today));
+            int ageDays = (int) Math.max(0, ChronoUnit.DAYS.between(safeApplicationDate(application), today));
             PriorityDetails priority = calculatePriority(application, queueType, ageDays);
             rows.add(new DrilldownRow(
                 application.getId(),
@@ -845,6 +845,10 @@ public class AdminDashboardV2Service {
             case QUEUE_COMPLETED -> "/applications?appStatus=COMPLETED";
             default -> "/applications";
         };
+    }
+
+    private LocalDate safeApplicationDate(Application application) {
+        return application.getApplicationDate() != null ? application.getApplicationDate() : LocalDate.now();
     }
 
     private String normalizeCertificateState(String certificateState) {

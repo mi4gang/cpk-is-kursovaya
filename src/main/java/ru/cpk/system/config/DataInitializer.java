@@ -129,6 +129,7 @@ public class DataInitializer implements CommandLineRunner {
         Application trialApp = newApplication(student, p2, ApplicationStatus.TRIAL_ACCESS, DocumentStatus.APPROVED, AccessStatus.TRIAL_ACCESS);
         trialApp.setApplicationDate(LocalDate.now().minusDays(4));
         trialApp.setTrialEndsAt(LocalDate.now().plusDays(2));
+        trialApp.setTrialWasUsed(true);
         trialApp.setAssignedTeacher(teacher2);
         applicationRepository.save(trialApp);
 
