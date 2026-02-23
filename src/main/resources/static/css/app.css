@@ -154,6 +154,25 @@ button,
     font-size: 0.9rem;
 }
 
+.nested-card {
+    margin-top: 0.7rem;
+    background: #f8fbfd;
+}
+
+.progress-wrap {
+    width: 100%;
+    background: #e7edf2;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 12px;
+    margin-top: 0.5rem;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #2b9348, #55a630);
+}
+
 .auth-page {
     min-height: 100vh;
     display: grid;

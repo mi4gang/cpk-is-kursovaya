@@ -2,6 +2,8 @@ package ru.cpk.system.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,6 +26,17 @@ public class Program {
 
     @Column(length = 2000)
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ProgramType programType = ProgramType.ADVANCED_TRAINING;
+
+    @NotBlank
+    @Column(nullable = false)
+    private String category;
+
+    @Column(length = 1000)
+    private String requiredDocsNote;
 
     @Min(1)
     @Column(nullable = false)
@@ -60,6 +73,30 @@ public class Program {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ProgramType getProgramType() {
+        return programType;
+    }
+
+    public void setProgramType(ProgramType programType) {
+        this.programType = programType;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getRequiredDocsNote() {
+        return requiredDocsNote;
+    }
+
+    public void setRequiredDocsNote(String requiredDocsNote) {
+        this.requiredDocsNote = requiredDocsNote;
     }
 
     public int getDurationHours() {

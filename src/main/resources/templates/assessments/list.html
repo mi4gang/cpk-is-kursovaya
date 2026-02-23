@@ -3,36 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аттестация | ЦПК ИС</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <title>Аттестации | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root { --primary: #2563eb; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 380, 'GRAD' 0, 'opsz' 24; }
+    </style>
 </head>
-<body>
-<div th:replace="~{fragments :: topnav}"></div>
-<main class="container">
-    <h1>Результаты аттестации</h1>
-    <p><a class="btn" th:href="@{/assessments/new}" sec:authorize="hasAnyRole('ADMIN','TEACHER')">+ Добавить результат</a></p>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader(${activeItem})}"></div>
 
-    <table>
-        <thead>
-        <tr><th>ID</th><th>Заявка</th><th>Баллы</th><th>Статус</th><th>Дата</th><th>Действия</th></tr>
-        </thead>
-        <tbody>
-        <tr th:each="a : ${assessments}">
-            <td th:text="${a.id}"></td>
-            <td th:text="${a.application.id}"></td>
-            <td th:text="${a.score}"></td>
-            <td th:text="${a.status}"></td>
-            <td th:text="${a.resultDate}"></td>
-            <td class="actions" sec:authorize="hasAnyRole('ADMIN','TEACHER')">
-                <a th:href="@{/assessments/{id}/edit(id=${a.id})}">Редактировать</a>
-                <form th:action="@{/assessments/{id}/delete(id=${a.id})}" method="post" class="inline">
-                    <button type="submit">Удалить</button>
-                </form>
-            </td>
-            <td class="actions" sec:authorize="!hasAnyRole('ADMIN','TEACHER')">Только просмотр</td>
-        </tr>
-        </tbody>
-    </table>
+<main class="max-w-7xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight">Результаты аттестации</h1>
+            <p class="text-slate-500 mt-1" th:text="'Порог успешной аттестации: ' + ${passThreshold} + ' баллов'"></p>
+        </div>
+        <a th:href="@{/assessments/new}" class="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">
+            + Добавить результат
+        </a>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <div class="overflow-auto">
+            <table class="w-full min-w-[760px] text-sm">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3 text-left">ID</th>
+                    <th class="px-4 py-3 text-left">Слушатель</th>
+                    <th class="px-4 py-3 text-left">Группа / курс</th>
+                    <th class="px-4 py-3 text-left">Преподаватель</th>
+                    <th class="px-4 py-3 text-left">Заявка</th>
+                    <th class="px-4 py-3 text-left">Баллы</th>
+                    <th class="px-4 py-3 text-left">Статус</th>
+                    <th class="px-4 py-3 text-left">Дата</th>
+                    <th class="px-4 py-3 text-left">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${assessments}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                    <td class="px-4 py-3" th:text="${a.id}"></td>
+                    <td class="px-4 py-3">
+                        <p class="font-semibold" th:text="${a.application.listenerFullName}"></p>
+                        <p class="text-xs text-slate-500" th:text="${a.application.listenerEmail}"></p>
+                    </td>
+                    <td class="px-4 py-3" th:text="${a.application.program.title}"></td>
+                    <td class="px-4 py-3" th:text="${a.application.assignedTeacher != null ? a.application.assignedTeacher.fullName : 'Не назначен'}"></td>
+                    <td class="px-4 py-3" th:text="${a.application.id}"></td>
+                    <td class="px-4 py-3" th:text="${a.score}"></td>
+                    <td class="px-4 py-3">
+                        <span th:if="${a.status.name() == 'PASSED'}" class="px-2 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700" th:text="${a.status.label}"></span>
+                        <span th:if="${a.status.name() == 'NOT_PASSED'}" class="px-2 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700" th:text="${a.status.label}"></span>
+                    </td>
+                    <td class="px-4 py-3" th:text="${a.resultDate}"></td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <a th:href="@{/assessments/{id}/edit(id=${a.id})}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs hover:bg-slate-50">Редактировать</a>
+                            <form th:action="@{/assessments/{id}/delete(id=${a.id})}" method="post" class="inline"
+                                  onsubmit="return confirm('Удалить результат аттестации?');">
+                                <button type="submit" class="px-3 py-1.5 rounded-lg border border-rose-200 text-rose-600 text-xs hover:bg-rose-50">Удалить</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(assessments)}"><td colspan="9" class="px-4 py-8 text-center text-slate-500">Нет результатов.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 </body>
 </html>

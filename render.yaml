@@ -29,3 +29,5 @@ services:
         value: org.postgresql.Driver
       - key: SPRING_PROFILES_ACTIVE
         value: render
+      - key: APP_SEED_MODE
+        value: once

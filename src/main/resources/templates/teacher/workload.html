@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кабинет преподавателя | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root { --primary: #2563eb; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 380, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<header class="bg-white border-b border-[var(--border)] sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <a th:href="@{/teacher/groups}" sec:authorize="hasRole('TEACHER')"
+               class="w-10 h-10 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center">
+                <span class="material-symbols-outlined">school</span>
+            </a>
+            <a th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')"
+               class="w-10 h-10 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center">
+                <span class="material-symbols-outlined">school</span>
+            </a>
+            <span class="text-xl font-extrabold tracking-tight">ЦПК <span class="text-[var(--primary)]">ИС</span></span>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-5 text-sm text-slate-600" sec:authorize="hasRole('TEACHER')">
+            <a th:href="@{/teacher/groups}" class="text-blue-600 font-semibold">Мои группы</a>
+            <a th:href="@{/programs}" class="hover:text-blue-600">Программы</a>
+            <a th:href="@{/assessments}" class="hover:text-blue-600">Аттестации</a>
+            <a th:href="@{/about}" class="hover:text-blue-600">Об авторе</a>
+        </nav>
+
+        <nav class="hidden md:flex items-center gap-5 text-sm text-slate-600" sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/dashboard}" class="hover:text-blue-600">Аналитика</a>
+            <a th:href="@{/programs}" class="hover:text-blue-600">Программы</a>
+            <a th:href="@{/applications}" class="hover:text-blue-600">Заявки</a>
+            <a th:href="@{/payments}" class="hover:text-blue-600">Оплаты</a>
+            <a th:href="@{/assessments}" class="hover:text-blue-600">Аттестации</a>
+            <a th:href="@{/certificates}" class="hover:text-blue-600">Удостоверения</a>
+            <a th:href="@{/about}" class="hover:text-blue-600">Об авторе</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+            <form th:action="@{/logout}" method="post">
+                <button class="px-3 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Выйти</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section>
+        <h1 class="text-3xl font-bold tracking-tight">Нагрузка преподавателя</h1>
+        <p class="text-slate-500 mt-1">Ведение прогресса и завершение обучения назначенных слушателей.</p>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-auto">
+            <table class="w-full min-w-[1020px] text-sm">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3 text-left">Слушатель</th>
+                    <th class="px-4 py-3 text-left">Программа</th>
+                    <th class="px-4 py-3 text-left" th:if="${isAdminView}">Преподаватель</th>
+                    <th class="px-4 py-3 text-left">Прогресс</th>
+                    <th class="px-4 py-3 text-left">Аттестация</th>
+                    <th class="px-4 py-3 text-left">Завершение</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${applications}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                    <td class="px-4 py-3">
+                        <p class="font-semibold" th:text="${a.listenerFullName}"></p>
+                        <p class="text-xs text-slate-500" th:text="${a.listenerEmail}"></p>
+                    </td>
+                    <td class="px-4 py-3">
+                        <p class="font-medium" th:text="${a.program.title}"></p>
+                        <p class="text-xs text-slate-500" th:text="${a.program.durationHours + ' ч'}"></p>
+                    </td>
+                    <td class="px-4 py-3" th:if="${isAdminView}" th:text="${a.assignedTeacher != null ? a.assignedTeacher.fullName : 'Не назначен'}"></td>
+                    <td class="px-4 py-3">
+                        <form th:action="@{/teacher/groups/{id}/progress(id=${a.id})}" method="post" class="flex items-center gap-2">
+                            <input type="number" min="0" max="100" name="progressPercent" th:value="${a.progressPercent}"
+                                   class="w-20 px-2 py-1.5 rounded-lg border border-slate-200" required>
+                            <button type="submit" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700">Обновить</button>
+                        </form>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span th:if="${a.assessmentResult == null}" class="px-2 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold">Нет результата</span>
+                        <span th:if="${a.assessmentResult != null and a.assessmentResult.status.name() == 'PASSED'}" class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold"
+                              th:text="${a.assessmentResult.status.label + ' (' + a.assessmentResult.score + ')'}"></span>
+                        <span th:if="${a.assessmentResult != null and a.assessmentResult.status.name() == 'NOT_PASSED'}" class="px-2 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold"
+                              th:text="${a.assessmentResult.status.label + ' (' + a.assessmentResult.score + ')'}"></span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span th:if="${a.teacherCompleted}" class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">Завершено</span>
+                        <form th:if="${!a.teacherCompleted}" th:action="@{/teacher/groups/{id}/complete(id=${a.id})}" method="post" class="inline">
+                            <button type="submit" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold hover:bg-slate-50">Завершить</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(applications)}"><td colspan="6" class="px-4 py-8 text-center text-slate-500">Нет назначенных слушателей.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

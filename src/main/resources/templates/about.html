@@ -1,21 +1,44 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Об авторе | ЦПК ИС</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body { font-family: 'Inter', sans-serif; }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 380, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
 </head>
-<body>
-<div th:replace="~{fragments :: topnav}"></div>
-<main class="container">
-    <h1>Об авторе</h1>
-    <section class="card">
-        <p><strong>ФИО:</strong> [Укажите ФИО]</p>
-        <p><strong>Группа / учебное заведение:</strong> [Укажите группу и вуз]</p>
-        <p><strong>Контакты:</strong> [Укажите e-mail/телефон]</p>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader('about')}"></div>
+
+<main class="max-w-3xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section>
+        <h1 class="text-3xl font-bold tracking-tight">Об авторе</h1>
+        <p class="text-slate-500 mt-1">Информация по критерию страницы автора в курсовом проекте.</p>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3 text-sm">
+        <p><strong>ФИО:</strong> Маричук Михаил Борисович</p>
+        <p><strong>Учебное заведение:</strong> Финансовый университет при Правительстве Российской Федерации</p>
+        <p><strong>Группа:</strong> ДПИ23-1 (заочная форма обучения)</p>
+        <p><strong>Контакты:</strong> 233330@edu.fa.ru, +7 (991) 717-10-00</p>
         <p><strong>Опыт:</strong> Управление IT-инфраструктурой в коммерции</p>
-        <p><strong>Даты проекта:</strong> 01.10.2025 - 10.12.2025</p>
+        <p><strong>Даты проекта:</strong> 18.02.2026 - 20.02.2026</p>
     </section>
 </main>
 </body>

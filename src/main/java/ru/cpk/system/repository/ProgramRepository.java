@@ -9,4 +9,8 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
     List<Program> findByTitleContainingIgnoreCase(String title, Sort sort);
 
     long countByActiveTrue();
+
+    List<Program> findTop3ByCategoryAndActiveTrueAndIdNotOrderByStartDateAsc(String category, Long id);
+
+    List<Program> findTop6ByActiveTrueOrderByStartDateAsc();
 }

@@ -1,52 +1,114 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Заявка | ЦПК ИС</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
-</head>
-<body>
-<div th:replace="~{fragments :: topnav}"></div>
-<main class="container">
-    <h1 th:text="${application.id == null ? 'Новая заявка' : 'Редактирование заявки'}"></h1>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        body { font-family: 'Inter', sans-serif; }
 
-    <form th:action="@{/applications/save}" th:object="${application}" method="post" class="card form-grid">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 380, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader(${activeItem})}"></div>
+
+<main class="max-w-4xl mx-auto px-5 lg:px-8 py-8">
+    <section class="mb-6">
+        <h1 class="text-3xl font-bold tracking-tight" th:text="${application.id == null ? 'Новая заявка' : 'Редактирование заявки'}"></h1>
+        <p class="text-slate-500 mt-1" th:text="${isStudent ? 'Заполните данные для подачи заявки на обучение.' : 'Проверьте данные заявки и операционные статусы.'}"></p>
+    </section>
+
+    <form th:action="@{/applications/save}" th:object="${application}" method="post" class="space-y-5">
         <input type="hidden" th:field="*{id}">
 
-        <label>ФИО слушателя
-            <input type="text" th:field="*{listenerFullName}" required>
-            <small class="err" th:if="${#fields.hasErrors('listenerFullName')}" th:errors="*{listenerFullName}"></small>
-        </label>
+        <section class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div th:if="${isStudent}" class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-5">
+                <label class="block text-sm font-medium text-slate-700">ФИО слушателя
+                    <input type="text" th:value="${studentProfileFullName}" readonly
+                           class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50 text-slate-700">
+                </label>
+                <label class="block text-sm font-medium text-slate-700">Email
+                    <input type="text" th:value="${studentProfileEmail}" readonly
+                           class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50 text-slate-700">
+                </label>
+                <label class="block text-sm font-medium text-slate-700">Телефон
+                    <input type="text" th:value="${studentProfilePhone}" readonly
+                           class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50 text-slate-700">
+                </label>
+            </div>
 
-        <label>Email
-            <input type="email" th:field="*{listenerEmail}" required>
-            <small class="err" th:if="${#fields.hasErrors('listenerEmail')}" th:errors="*{listenerEmail}"></small>
-        </label>
+            <input type="hidden" th:field="*{listenerFullName}" sec:authorize="hasRole('STUDENT')">
+            <input type="hidden" th:field="*{listenerEmail}" sec:authorize="hasRole('STUDENT')">
+            <input type="hidden" th:field="*{listenerPhone}" sec:authorize="hasRole('STUDENT')">
 
-        <label>Телефон
-            <input type="text" th:field="*{listenerPhone}" required>
-        </label>
+            <label class="block text-sm font-medium text-slate-700" sec:authorize="hasAnyRole('ADMIN','METHODIST')">ФИО слушателя
+                <input type="text" th:field="*{listenerFullName}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+                <small class="text-xs text-rose-600" th:if="${#fields.hasErrors('listenerFullName')}" th:errors="*{listenerFullName}"></small>
+            </label>
 
-        <label>Дата заявки
-            <input type="date" th:field="*{applicationDate}" required>
-        </label>
+            <label class="block text-sm font-medium text-slate-700" sec:authorize="hasAnyRole('ADMIN','METHODIST')">Email
+                <input type="email" th:field="*{listenerEmail}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+                <small class="text-xs text-rose-600" th:if="${#fields.hasErrors('listenerEmail')}" th:errors="*{listenerEmail}"></small>
+            </label>
 
-        <label>Программа
-            <select th:field="*{program}" required>
-                <option th:each="p : ${programs}" th:value="${p.id}" th:text="${p.title}"></option>
-            </select>
-        </label>
+            <label class="block text-sm font-medium text-slate-700" sec:authorize="hasAnyRole('ADMIN','METHODIST')">Телефон
+                <input type="text" th:field="*{listenerPhone}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+            </label>
 
-        <label>Статус
-            <select th:field="*{status}">
-                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
-            </select>
-        </label>
+            <label class="block text-sm font-medium text-slate-700">Программа
+                <select th:field="*{program}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+                    <option th:each="p : ${programs}" th:value="${p.id}" th:text="${p.title}"></option>
+                </select>
+            </label>
 
-        <div class="row">
-            <button type="submit">Сохранить</button>
-            <a class="btn" th:href="@{/applications}">Отмена</a>
+            <label class="block text-sm font-medium text-slate-700" sec:authorize="hasAnyRole('ADMIN','METHODIST')">Дата заявки
+                <input type="date" th:field="*{applicationDate}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+            </label>
+            <input type="hidden" th:field="*{applicationDate}" sec:authorize="hasRole('STUDENT')">
+        </section>
+
+        <section class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-5" sec:authorize="hasAnyRole('ADMIN','METHODIST')">
+            <div class="md:col-span-3 text-sm text-slate-500"
+                 th:text="${'Текущий статус заявки: ' + (application.status != null ? application.status.label : '—')}"></div>
+            <input type="hidden" th:field="*{status}">
+
+            <label class="block text-sm font-medium text-slate-700">Проверка документов
+                <select th:field="*{docStatus}" class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+                    <option th:each="s : ${docStatuses}" th:value="${s}" th:text="${s.label}"></option>
+                </select>
+            </label>
+
+            <label class="block text-sm font-medium text-slate-700">Статус доступа
+                <select th:field="*{accessStatus}" class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+                    <option th:each="s : ${accessStatuses}" th:value="${s}" th:text="${s.label}"></option>
+                </select>
+            </label>
+
+            <label class="block text-sm font-medium text-slate-700">Назначенный преподаватель
+                <select th:field="*{assignedTeacher}" class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Не назначен</option>
+                    <option th:each="t : ${teachers}" th:value="${t.id}" th:text="${t.fullName}"></option>
+                </select>
+            </label>
+        </section>
+
+        <div class="flex items-center gap-3">
+            <button type="submit" class="px-5 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">Сохранить</button>
+            <a th:href="@{/applications}" class="px-5 py-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">Отмена</a>
         </div>
     </form>
 </main>

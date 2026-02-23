@@ -3,19 +3,174 @@
 <body>
 <header th:fragment="topnav" class="topnav">
     <div class="container nav-row">
-        <a class="brand" th:href="@{/}">ЦПК ИС</a>
-        <nav class="menu" sec:authorize="isAuthenticated()">
+        <a class="brand" th:href="@{/}" sec:authorize="!isAuthenticated()">ЦПК ИС</a>
+        <a class="brand" th:href="@{/dashboard}" sec:authorize="isAuthenticated()">ЦПК ИС</a>
+
+        <nav class="menu" sec:authorize="!isAuthenticated()">
+            <a th:href="@{/}">Главная</a>
+            <a th:href="@{/programs}">Программы</a>
+            <a href="/#consultation">Консультация</a>
+            <a th:href="@{/about}">Об авторе</a>
+            <a th:href="@{/login}">Вход</a>
+            <a th:href="@{/register}">Регистрация</a>
+        </nav>
+
+        <nav class="menu" sec:authorize="hasRole('STUDENT')">
+            <a th:href="@{/student/cabinet}">Моё обучение</a>
+            <a th:href="@{/programs}">Каталог программ</a>
+            <a th:href="@{/applications}">Мои заявки</a>
+            <a th:href="@{/about}">Об авторе</a>
+        </nav>
+
+        <nav class="menu" sec:authorize="hasRole('METHODIST')">
+            <a th:href="@{/methodist/queue}">Очереди</a>
             <a th:href="@{/programs}">Программы</a>
             <a th:href="@{/applications}">Заявки</a>
             <a th:href="@{/payments}">Оплаты</a>
-            <a th:href="@{/assessments}">Аттестация</a>
             <a th:href="@{/certificates}">Удостоверения</a>
             <a th:href="@{/about}">Об авторе</a>
         </nav>
+
+        <nav class="menu" sec:authorize="hasRole('TEACHER')">
+            <a th:href="@{/teacher/groups}">Мои группы</a>
+            <a th:href="@{/programs}">Программы</a>
+            <a th:href="@{/assessments}">Аттестации</a>
+            <a th:href="@{/about}">Об авторе</a>
+        </nav>
+
+        <nav class="menu" sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/dashboard-v2}">Аналитика</a>
+            <a th:href="@{/programs}">Программы</a>
+            <a th:href="@{/applications}">Заявки</a>
+            <a th:href="@{/payments}">Оплаты</a>
+            <a th:href="@{/assessments}">Аттестации</a>
+            <a th:href="@{/certificates}">Удостоверения</a>
+            <a th:href="@{/about}">Об авторе</a>
+        </nav>
+
         <div class="menu" sec:authorize="isAuthenticated()">
             <span sec:authentication="name"></span>
             <form th:action="@{/logout}" method="post" class="inline">
                 <button type="submit">Выйти</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<header th:fragment="roleHeader(activeItem)" class="bg-white border-b border-slate-200 sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <a th:href="@{/}" sec:authorize="!isAuthenticated() or hasRole('STUDENT')"
+               class="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                <span class="material-symbols-outlined !text-xl">school</span>
+            </a>
+            <a th:href="@{/methodist/queue}" sec:authorize="hasRole('METHODIST')"
+               class="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                <span class="material-symbols-outlined !text-xl">school</span>
+            </a>
+            <a th:href="@{/teacher/groups}" sec:authorize="hasRole('TEACHER')"
+               class="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                <span class="material-symbols-outlined !text-xl">school</span>
+            </a>
+            <a th:href="@{/admin/dashboard-v2}" sec:authorize="hasRole('ADMIN')"
+               class="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                <span class="material-symbols-outlined !text-xl">school</span>
+            </a>
+            <span class="text-xl font-extrabold tracking-tight">ЦПК <span class="text-blue-600">ИС</span></span>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600" sec:authorize="!isAuthenticated()">
+            <a th:href="@{/}" th:classappend="${activeItem == 'public-home'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Главная</a>
+            <a th:href="@{/programs}" th:classappend="${activeItem == 'public-programs'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Программы</a>
+            <a href="/#consultation" th:classappend="${activeItem == 'public-consultation'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Консультация</a>
+            <a th:href="@{/about}" th:classappend="${activeItem == 'about'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Об авторе</a>
+        </nav>
+
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600" sec:authorize="hasRole('STUDENT')">
+            <a th:href="@{/programs}" th:classappend="${activeItem == 'student-programs'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Программы</a>
+            <a th:href="@{/student/cabinet}" th:classappend="${activeItem == 'student-cabinet'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Мой кабинет</a>
+            <a th:href="@{/student/profile}" th:classappend="${activeItem == 'student-profile'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Мой профиль</a>
+            <a th:href="@{/about}" th:classappend="${activeItem == 'about'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Об авторе</a>
+        </nav>
+
+        <nav class="hidden md:flex items-center gap-5 text-sm text-slate-600" sec:authorize="hasRole('METHODIST')">
+            <a th:href="@{/methodist/queue}" th:classappend="${activeItem == 'methodist-queue'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Очереди</a>
+            <a th:href="@{/programs}" th:classappend="${activeItem == 'methodist-programs'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Программы</a>
+            <a th:href="@{/applications}" th:classappend="${activeItem == 'methodist-applications'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Заявки</a>
+            <a th:href="@{/payments}" th:classappend="${activeItem == 'methodist-payments'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Оплаты</a>
+            <a th:href="@{/certificates}" th:classappend="${activeItem == 'methodist-certificates'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Удостоверения</a>
+            <a th:href="@{/about}" th:classappend="${activeItem == 'about'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Об авторе</a>
+        </nav>
+
+        <nav class="hidden md:flex items-center gap-5 text-sm text-slate-600" sec:authorize="hasRole('TEACHER')">
+            <a th:href="@{/teacher/groups}" th:classappend="${activeItem == 'teacher-groups'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Мои группы</a>
+            <a th:href="@{/programs}" th:classappend="${activeItem == 'teacher-programs'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Программы</a>
+            <a th:href="@{/assessments}" th:classappend="${activeItem == 'teacher-assessments'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Аттестации</a>
+            <a th:href="@{/about}" th:classappend="${activeItem == 'about'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Об авторе</a>
+        </nav>
+
+        <nav class="hidden md:flex items-center gap-5 text-sm text-slate-600" sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/dashboard-v2}" th:classappend="${activeItem == 'admin-dashboard-v2'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Аналитика</a>
+            <a th:href="@{/programs}" th:classappend="${activeItem == 'admin-programs'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Программы</a>
+            <a th:href="@{/applications}" th:classappend="${activeItem == 'admin-applications'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Заявки</a>
+            <a th:href="@{/payments}" th:classappend="${activeItem == 'admin-payments'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Оплаты</a>
+            <a th:href="@{/assessments}" th:classappend="${activeItem == 'admin-assessments'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Аттестации</a>
+            <a th:href="@{/certificates}" th:classappend="${activeItem == 'admin-certificates'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Удостоверения</a>
+            <a th:href="@{/about}" th:classappend="${activeItem == 'about'} ? ' text-blue-600 font-semibold' : ' hover:text-blue-600'">Об авторе</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+            <div sec:authorize="hasRole('TEACHER')" class="hidden lg:flex flex-col items-end mr-2">
+                <span class="text-xs text-slate-500 leading-tight">Преподаватель</span>
+                <span class="text-sm font-semibold" th:text="${teacherDisplayName != null ? teacherDisplayName : #authentication.name}">ФИО преподавателя</span>
+            </div>
+            <details class="md:hidden relative">
+                <summary class="list-none cursor-pointer px-3 py-2 rounded-lg border border-slate-200 text-sm">Меню</summary>
+                <div class="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-lg p-3 z-30">
+                    <nav class="flex flex-col gap-2 text-sm text-slate-700" sec:authorize="!isAuthenticated()">
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/}">Главная</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/programs}">Программы</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" href="/#consultation">Консультация</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/about}">Об авторе</a>
+                    </nav>
+                    <nav class="flex flex-col gap-2 text-sm text-slate-700" sec:authorize="hasRole('STUDENT')">
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/programs}">Программы</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/student/cabinet}">Мой кабинет</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/student/profile}">Мой профиль</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/about}">Об авторе</a>
+                    </nav>
+                    <nav class="flex flex-col gap-2 text-sm text-slate-700" sec:authorize="hasRole('METHODIST')">
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/methodist/queue}">Очереди</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/programs}">Программы</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/applications}">Заявки</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/payments}">Оплаты</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/certificates}">Удостоверения</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/about}">Об авторе</a>
+                    </nav>
+                    <nav class="flex flex-col gap-2 text-sm text-slate-700" sec:authorize="hasRole('TEACHER')">
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/teacher/groups}">Мои группы</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/programs}">Программы</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/assessments}">Аттестации</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/about}">Об авторе</a>
+                    </nav>
+                    <nav class="flex flex-col gap-2 text-sm text-slate-700" sec:authorize="hasRole('ADMIN')">
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/admin/dashboard-v2}">Аналитика</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/programs}">Программы</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/applications}">Заявки</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/payments}">Оплаты</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/assessments}">Аттестации</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/certificates}">Удостоверения</a>
+                        <a class="px-2 py-1.5 rounded hover:bg-slate-50" th:href="@{/about}">Об авторе</a>
+                    </nav>
+                </div>
+            </details>
+
+            <a th:href="@{/login}" sec:authorize="!isAuthenticated()"
+               class="px-3 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Войти</a>
+            <a th:href="@{/register}" sec:authorize="!isAuthenticated()"
+               class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-blue-700">Регистрация</a>
+            <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+                <button class="px-3 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Выйти</button>
             </form>
         </div>
     </div>

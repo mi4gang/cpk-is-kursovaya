@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Группы преподавателя | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root { --primary: #2563eb; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 380, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader(${activeItem})}"></div>
+
+<main class="max-w-7xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section>
+        <h1 class="text-3xl font-bold tracking-tight">Активные группы по программам</h1>
+        <p class="text-slate-500 mt-1">Выберите программу, чтобы перейти к слушателям группы и управлению обучением.</p>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-auto">
+            <table class="w-full min-w-[860px] text-sm">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3 text-left">Программа</th>
+                    <th class="px-4 py-3 text-left">Слушателей в группе</th>
+                    <th class="px-4 py-3 text-left">Средний прогресс</th>
+                    <th class="px-4 py-3 text-left">% аттестованных</th>
+                    <th class="px-4 py-3 text-left">Учебный портал</th>
+                    <th class="px-4 py-3 text-left">Действие</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="g : ${groups}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                    <td class="px-4 py-3 font-semibold" th:text="${g.programTitle}"></td>
+                    <td class="px-4 py-3" th:text="${g.studentCount}"></td>
+                    <td class="px-4 py-3" th:text="${g.avgProgress + '%'}"></td>
+                    <td class="px-4 py-3" th:text="${g.assessedPercent + '%'}"></td>
+                    <td class="px-4 py-3">
+                        <a href="https://example.com" target="_blank" rel="noopener noreferrer"
+                           class="text-blue-600 hover:underline">Открыть портал (заглушка)</a>
+                    </td>
+                    <td class="px-4 py-3">
+                        <a th:href="@{/teacher/groups/{programId}(programId=${g.programId})}"
+                           class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700">
+                            Открыть группу
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(groups)}">
+                    <td colspan="6" class="px-4 py-8 text-center text-slate-500">Нет активных групп для отображения.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>
