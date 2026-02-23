@@ -1,45 +1,70 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Удостоверение | ЦПК ИС</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root { --primary: #2563eb; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 380, 'GRAD' 0, 'opsz' 24; }
+    </style>
 </head>
-<body>
-<div th:replace="~{fragments :: topnav}"></div>
-<main class="container">
-    <h1 th:text="${certificate.id == null ? 'Новое удостоверение' : 'Редактирование удостоверения'}"></h1>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader(${activeItem})}"></div>
 
-    <form th:action="@{/certificates/save}" th:object="${certificate}" method="post" class="card form-grid">
-        <input type="hidden" th:field="*{id}">
+<main class="max-w-3xl mx-auto px-5 lg:px-8 py-8">
+    <section class="mb-6">
+        <h1 class="text-3xl font-bold tracking-tight" th:text="${certificate.id == null ? 'Новое удостоверение' : 'Редактирование удостоверения'}"></h1>
+        <p class="text-slate-500 mt-1">Удостоверение выдается только после успешной аттестации и завершения обучения.</p>
+        <a th:href="@{/certificates}" class="inline-flex items-center gap-1 mt-3 text-sm text-slate-500 hover:text-blue-600">
+            <span class="material-symbols-outlined !text-base">arrow_back</span>
+            К списку удостоверений
+        </a>
+    </section>
 
-        <label>Номер удостоверения
-            <input type="text" th:field="*{number}" required>
-            <small class="err" th:if="${#fields.hasErrors('number')}" th:errors="*{number}"></small>
-        </label>
+    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <form th:action="@{/certificates/save}" th:object="${certificate}" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <input type="hidden" th:field="*{id}">
 
-        <label>Заявка
-            <select th:field="*{application}" required>
-                <option th:each="a : ${applications}" th:value="${a.id}" th:text="${a.id + ' - ' + a.listenerFullName}"></option>
-            </select>
-        </label>
+            <label class="block text-sm font-medium text-slate-700">Номер удостоверения
+                <input type="text" th:field="*{number}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+                <small class="text-xs text-rose-600" th:if="${#fields.hasErrors('number')}" th:errors="*{number}"></small>
+            </label>
 
-        <label>Дата выдачи
-            <input type="date" th:field="*{issueDate}" required>
-        </label>
+            <label class="block text-sm font-medium text-slate-700">Дата выдачи
+                <input type="date" th:field="*{issueDate}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+            </label>
 
-        <label>Статус
-            <select th:field="*{status}">
-                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
-            </select>
-        </label>
+            <label class="block text-sm font-medium text-slate-700 md:col-span-2">Заявка
+                <select th:field="*{application}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+                    <option th:each="a : ${applications}" th:value="${a.id}"
+                            th:text="${'ID ' + a.id + ' | ' + a.listenerFullName + ' | ' + a.program.title}"></option>
+                </select>
+            </label>
 
-        <div class="row">
-            <button type="submit">Сохранить</button>
-            <a class="btn" th:href="@{/certificates}">Отмена</a>
-        </div>
-    </form>
+            <input type="hidden" th:field="*{status}" th:if="${certificate.id == null}">
+
+            <label class="block text-sm font-medium text-slate-700" th:if="${certificate.id != null}">Статус
+                <select th:field="*{status}" class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+                    <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}"></option>
+                </select>
+            </label>
+
+            <label class="block text-sm font-medium text-slate-700">Ссылка на документ (mock)
+                <input type="text" th:field="*{documentLink}" placeholder="https://docs.example/certificate.pdf" class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500">
+            </label>
+
+            <div class="md:col-span-2 flex items-center gap-3">
+                <button type="submit" class="px-5 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">Сохранить</button>
+                <a th:href="@{/certificates}" class="px-5 py-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">Отмена</a>
+            </div>
+        </form>
+    </div>
 </main>
 </body>
 </html>

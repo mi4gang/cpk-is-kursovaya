@@ -24,59 +24,7 @@
     </style>
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-900">
-<header class="bg-white border-b border-[var(--border)] sticky top-0 z-20">
-    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <a th:href="@{/}" sec:authorize="hasRole('STUDENT')"
-               class="w-10 h-10 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center">
-                <span class="material-symbols-outlined !text-xl">school</span>
-            </a>
-            <a th:href="@{/methodist/queue}" sec:authorize="hasRole('METHODIST')"
-               class="w-10 h-10 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center">
-                <span class="material-symbols-outlined !text-xl">school</span>
-            </a>
-            <a th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')"
-               class="w-10 h-10 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center">
-                <span class="material-symbols-outlined !text-xl">school</span>
-            </a>
-            <span class="text-xl font-extrabold tracking-tight">ЦПК <span class="text-[var(--primary)]">ИС</span></span>
-        </div>
-
-        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-[var(--text-muted)]" sec:authorize="hasRole('STUDENT')">
-            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/programs}">Программы</a>
-            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/student/cabinet}">Мой кабинет</a>
-            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/student/profile}">Мой профиль</a>
-            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/about}">Об авторе</a>
-        </nav>
-
-        <nav class="hidden md:flex items-center gap-5 text-sm text-slate-600" sec:authorize="hasRole('METHODIST')">
-            <a th:href="@{/methodist/queue}" class="hover:text-blue-600">Очереди</a>
-            <a th:href="@{/programs}" class="hover:text-blue-600">Программы</a>
-            <a th:href="@{/applications}" class="text-blue-600 font-semibold">Заявки</a>
-            <a th:href="@{/payments}" class="hover:text-blue-600">Оплаты</a>
-            <a th:href="@{/certificates}" class="hover:text-blue-600">Удостоверения</a>
-            <a th:href="@{/about}" class="hover:text-blue-600">Об авторе</a>
-        </nav>
-
-        <nav class="hidden md:flex items-center gap-5 text-sm text-slate-600" sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/admin/dashboard}" class="hover:text-blue-600">Аналитика</a>
-            <a th:href="@{/programs}" class="hover:text-blue-600">Программы</a>
-            <a th:href="@{/applications}" class="text-blue-600 font-semibold">Заявки</a>
-            <a th:href="@{/payments}" class="hover:text-blue-600">Оплаты</a>
-            <a th:href="@{/assessments}" class="hover:text-blue-600">Аттестации</a>
-            <a th:href="@{/certificates}" class="hover:text-blue-600">Удостоверения</a>
-            <a th:href="@{/about}" class="hover:text-blue-600">Об авторе</a>
-        </nav>
-
-        <div class="flex items-center gap-2">
-            <a th:href="@{/applications}" sec:authorize="hasAnyRole('ADMIN','METHODIST')"
-               class="px-3 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">К списку</a>
-            <form th:action="@{/logout}" method="post" sec:authorize="hasAnyRole('ADMIN','METHODIST','STUDENT')">
-                <button class="px-3 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Выйти</button>
-            </form>
-        </div>
-    </div>
-</header>
+<div th:replace="~{fragments :: roleHeader(${activeItem})}"></div>
 
 <main class="max-w-4xl mx-auto px-5 lg:px-8 py-8">
     <section class="mb-6">

@@ -1,50 +1,107 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Программа | ЦПК ИС</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <title>Редактор программы | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root { --primary: #2563eb; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; }
+        .form-card { @apply bg-white border border-slate-200 rounded-xl p-6 shadow-sm; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 380, 'GRAD' 0, 'opsz' 24; }
+    </style>
 </head>
-<body>
-<div th:replace="~{fragments :: topnav}"></div>
-<main class="container">
-    <h1 th:text="${program.id == null ? 'Новая программа' : 'Редактирование программы'}"></h1>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader(${activeItem})}"></div>
 
-    <form th:action="@{/programs/save}" th:object="${program}" method="post" class="card form-grid">
+<main class="max-w-5xl mx-auto px-5 lg:px-8 py-8">
+    <section class="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight" th:text="${program.id == null ? 'Новая программа' : 'Редактирование программы'}"></h1>
+            <p class="text-slate-500 mt-1">Укажите параметры курса и требования к допуску слушателей.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a th:href="@{/programs}" class="px-3 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">К списку</a>
+            <button form="programForm" type="submit" class="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">Сохранить</button>
+        </div>
+    </section>
+
+    <form id="programForm" th:action="@{/programs/save}" th:object="${program}" method="post" class="space-y-6">
         <input type="hidden" th:field="*{id}">
 
-        <label>Название
-            <input type="text" th:field="*{title}" required>
-            <small class="err" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
-        </label>
+        <section class="form-card space-y-5">
+            <h2 class="text-lg font-semibold">Основная информация</h2>
 
-        <label>Описание
-            <textarea th:field="*{description}" rows="4"></textarea>
-        </label>
+            <label class="block text-sm font-medium text-slate-700">
+                Название программы
+                <input class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500"
+                       type="text" th:field="*{title}" required>
+                <small class="text-xs text-red-600" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+            </label>
 
-        <label>Продолжительность (часы)
-            <input type="number" th:field="*{durationHours}" min="1" required>
-            <small class="err" th:if="${#fields.hasErrors('durationHours')}" th:errors="*{durationHours}"></small>
-        </label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <label class="block text-sm font-medium text-slate-700">
+                    Тип программы
+                    <select class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500" th:field="*{programType}" required>
+                        <option th:each="t : ${types}" th:value="${t}" th:text="${t.label}"></option>
+                    </select>
+                </label>
 
-        <label>Дата начала
-            <input type="date" th:field="*{startDate}" required>
-        </label>
+                <label class="block text-sm font-medium text-slate-700">
+                    Категория
+                    <input class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500"
+                           type="text" th:field="*{category}" required>
+                    <small class="text-xs text-red-600" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></small>
+                </label>
+            </div>
 
-        <label>Дата окончания
-            <input type="date" th:field="*{endDate}" required>
-            <small class="err" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></small>
-        </label>
+            <label class="block text-sm font-medium text-slate-700">
+                Описание курса
+                <textarea class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500" th:field="*{description}" rows="4"></textarea>
+            </label>
+        </section>
 
-        <label class="check">
-            <input type="checkbox" th:field="*{active}"> Активная программа
-        </label>
+        <section class="form-card">
+            <h2 class="text-lg font-semibold mb-5">Параметры обучения</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <label class="block text-sm font-medium text-slate-700">
+                    Длительность (часов)
+                    <input class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500"
+                           type="number" th:field="*{durationHours}" min="1" required>
+                    <small class="text-xs text-red-600" th:if="${#fields.hasErrors('durationHours')}" th:errors="*{durationHours}"></small>
+                </label>
 
-        <div class="row">
-            <button type="submit">Сохранить</button>
-            <a class="btn" th:href="@{/programs}">Отмена</a>
-        </div>
+                <label class="block text-sm font-medium text-slate-700">
+                    Дата начала
+                    <input class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500" type="date" th:field="*{startDate}" required>
+                </label>
+
+                <label class="block text-sm font-medium text-slate-700">
+                    Дата окончания
+                    <input class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500" type="date" th:field="*{endDate}" required>
+                    <small class="text-xs text-red-600" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></small>
+                </label>
+            </div>
+        </section>
+
+        <section class="form-card">
+            <h2 class="text-lg font-semibold mb-5">Документы и требования</h2>
+
+            <label class="block text-sm font-medium text-slate-700">
+                Необходимые документы
+                <textarea class="mt-1.5 w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500"
+                          th:field="*{requiredDocsNote}" rows="3" placeholder="Паспорт, диплом, заявление..."></textarea>
+            </label>
+
+            <label class="mt-4 flex items-center gap-2 text-sm font-medium text-slate-700">
+                <input type="checkbox" th:field="*{active}" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                Активная программа в каталоге
+            </label>
+        </section>
     </form>
 </main>
 </body>

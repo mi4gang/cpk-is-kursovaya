@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карточка кейса | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root { --primary: #2563eb; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader('admin-dashboard-v2')}"></div>
+
+<main class="max-w-7xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section>
+        <a th:href="@{/admin/dashboard-v2}" class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-blue-600 mb-2">
+            <span class="material-symbols-outlined !text-base">arrow_back</span>
+            Назад в аналитику
+        </a>
+        <h1 class="text-3xl font-bold tracking-tight" th:text="${'Кейс #' + caseView.applicationId}">Кейс</h1>
+        <p class="text-slate-500 mt-1" th:text="${caseView.listenerFullName + ' • ' + caseView.programTitle}">Слушатель • Программа</p>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">Этап</p>
+            <p class="text-xl font-semibold mt-2" th:text="${caseView.queueTitle}">Этап</p>
+            <p class="text-xs text-slate-500 mt-2" th:text="${caseView.reason}">Причина</p>
+        </article>
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">Возраст кейса</p>
+            <p class="text-xl font-semibold mt-2" th:text="${caseView.ageDays + ' дн.'}">0 дн.</p>
+        </article>
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">Приоритет</p>
+            <p class="text-xl font-semibold mt-2" th:text="${caseView.priorityLevelLabel + ' (' + caseView.priorityScore + ')'}">Высокий (100)</p>
+            <p class="text-xs text-slate-500 mt-2" th:text="${caseView.priorityExplanation}">Формула</p>
+        </article>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">Оплата</p>
+            <p class="font-semibold mt-2" th:text="${caseView.paymentStatusLabel}">Статус</p>
+            <p class="text-sm text-slate-600 mt-1" th:text="${#numbers.formatDecimal(caseView.paymentAmount,1,'COMMA',2,'POINT')} + ' ₽'">0 ₽</p>
+            <p class="text-xs text-slate-500 mt-1" th:text="${caseView.paymentDate != null ? caseView.paymentDate : 'Дата не зафиксирована'}">Дата</p>
+        </article>
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">Преподаватель</p>
+            <p class="font-semibold mt-2" th:text="${caseView.teacherName}">Не назначен</p>
+            <p class="text-xs text-slate-500 mt-1" th:text="${'Прогресс: ' + caseView.progressPercent + '%'}">Прогресс</p>
+        </article>
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">Аттестация</p>
+            <p class="font-semibold mt-2" th:text="${caseView.assessmentStatusLabel}">Нет результата</p>
+            <p class="text-xs text-slate-500 mt-1"
+               th:text="${caseView.assessmentScore != null ? 'Балл: ' + caseView.assessmentScore : 'Балл не выставлен'}">Балл</p>
+        </article>
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">Удостоверение</p>
+            <p class="font-semibold mt-2" th:text="${caseView.certificateStatusLabel}">Не выдано</p>
+            <p class="text-xs text-slate-500 mt-1"
+               th:text="${caseView.certificateNumber != null ? '№ ' + caseView.certificateNumber : 'Номер не присвоен'}">Номер</p>
+            <p class="text-xs text-slate-500 mt-1"
+               th:text="${caseView.certificateIssueDate != null ? caseView.certificateIssueDate : 'Дата не зафиксирована'}">Дата</p>
+        </article>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h2 class="text-lg font-semibold mb-3">Открыть в реестрах (admin-only)</h2>
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+            <a th:href="@{${caseView.applicationsUrl}}" class="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50">Заявки</a>
+            <a th:href="@{${caseView.paymentsUrl}}" class="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50">Оплаты</a>
+            <a th:href="@{${caseView.assessmentsUrl}}" class="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50">Аттестации</a>
+            <a th:href="@{${caseView.certificatesUrl}}" class="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50">Удостоверения</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

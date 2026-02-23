@@ -1,36 +1,60 @@
 package ru.cpk.system.controller;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import ru.cpk.system.repository.ApplicationRepository;
+import ru.cpk.system.model.RoleName;
+import ru.cpk.system.model.User;
 import ru.cpk.system.repository.ProgramRepository;
-import ru.cpk.system.service.StatsService;
+import ru.cpk.system.repository.UserRepository;
 
 @Controller
 public class HomeController {
 
-    private final StatsService statsService;
     private final ProgramRepository programRepository;
-    private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
 
-    public HomeController(StatsService statsService,
-                          ProgramRepository programRepository,
-                          ApplicationRepository applicationRepository) {
-        this.statsService = statsService;
+    public HomeController(ProgramRepository programRepository,
+                          UserRepository userRepository) {
         this.programRepository = programRepository;
-        this.applicationRepository = applicationRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/")
-    public String home(Model model) {
-        model.addAttribute("totalListeners", statsService.totalListeners());
-        model.addAttribute("activePrograms", statsService.activePrograms());
-        model.addAttribute("paidAmount", statsService.paidAmount());
-        model.addAttribute("programs", programRepository.findAll(Sort.by(Sort.Direction.ASC, "title")));
-        model.addAttribute("recentApplications", applicationRepository.findAll(Sort.by(Sort.Direction.DESC, "id")));
-        return "home/index";
+    public String publicHome(Authentication authentication, Model model) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            User user = userRepository.findByUsername(authentication.getName()).orElse(null);
+            if (user != null) {
+                return "redirect:/dashboard";
+            }
+        }
+        model.addAttribute("programs", programRepository.findTop6ByActiveTrueOrderByStartDateAsc());
+        if (!model.containsAttribute("form")) {
+            model.addAttribute("form", new ConsultationController.ConsultationForm());
+        }
+        return "home/public";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+            .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
+
+        if (user.getRole() == RoleName.ADMIN) {
+            return "redirect:/admin/dashboard-v2";
+        }
+        if (user.getRole() == RoleName.METHODIST) {
+            return "redirect:/methodist/queue";
+        }
+        if (user.getRole() == RoleName.TEACHER) {
+            return "redirect:/teacher/groups";
+        }
+        if (user.getRole() == RoleName.STUDENT) {
+            return "redirect:/student/cabinet";
+        }
+
+        return "redirect:/";
     }
 
     @GetMapping("/about")

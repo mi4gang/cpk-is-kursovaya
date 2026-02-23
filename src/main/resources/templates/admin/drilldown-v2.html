@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Операционный drill-down | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root { --primary: #2563eb; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader('admin-dashboard-v2')}"></div>
+
+<main class="max-w-7xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <a th:href="@{/admin/dashboard-v2}" class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-blue-600 mb-2">
+                <span class="material-symbols-outlined !text-base">arrow_back</span>
+                Назад в аналитику
+            </a>
+            <h1 class="text-3xl font-bold tracking-tight" th:text="${'Детализация: ' + queueTypeLabel}">Детализация</h1>
+        </div>
+        <a th:href="@{${queueRegistryUrl}}" class="px-4 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Открыть очередь в реестре</a>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end">
+            <div>
+                <label class="text-xs font-semibold text-slate-500 uppercase">Очередь</label>
+                <select name="queueType" class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50">
+                    <option th:each="option : ${queueOptions}"
+                            th:value="${option.value}"
+                            th:text="${option.label}"
+                            th:selected="${queueType == option.value}"></option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-500 uppercase">Преподаватель</label>
+                <select name="teacherId" class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50">
+                    <option value="">Все</option>
+                    <option th:each="teacher : ${teacherLoads}"
+                            th:value="${teacher.teacherId()}"
+                            th:text="${teacher.teacherName()}"
+                            th:selected="${selectedTeacherId != null and selectedTeacherId == teacher.teacherId()}"></option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-500 uppercase">Уровень риска</label>
+                <select name="riskLevel" class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50">
+                    <option th:each="option : ${riskOptions}"
+                            th:value="${option.value}"
+                            th:text="${option.label}"
+                            th:selected="${riskLevel == option.value}"></option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-500 uppercase">Минимальный возраст (дни)</label>
+                <input type="number" min="0" name="minAgeDays" th:value="${minAgeDays}" class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50">
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-500 uppercase">Сортировка</label>
+                <select name="sort" class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50">
+                    <option th:each="option : ${sortOptions}"
+                            th:value="${option.value}"
+                            th:text="${option.label}"
+                            th:selected="${sort == option.value}"></option>
+                </select>
+            </div>
+            <label class="inline-flex items-center gap-2 text-sm pb-2">
+                <input type="checkbox" name="priorityOnly" value="true" th:checked="${priorityOnly}">
+                Только критичные и высокие
+            </label>
+            <div class="flex items-center gap-2">
+                <button type="submit" class="px-4 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Применить</button>
+                <a th:href="@{/admin/dashboard-v2/drilldown}" class="px-4 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Сбросить</a>
+            </div>
+        </form>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-auto">
+            <table class="w-full min-w-[1260px] text-sm">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3 text-left">ID</th>
+                    <th class="px-4 py-3 text-left">Слушатель</th>
+                    <th class="px-4 py-3 text-left">Программа</th>
+                    <th class="px-4 py-3 text-left">Очередь</th>
+                    <th class="px-4 py-3 text-left">Причина</th>
+                    <th class="px-4 py-3 text-left">Возраст, дни</th>
+                    <th class="px-4 py-3 text-left">Приоритет</th>
+                    <th class="px-4 py-3 text-left">Кейс</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${drilldownRows}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                    <td class="px-4 py-3" th:text="${row.applicationId}">1</td>
+                    <td class="px-4 py-3 font-semibold">
+                        <p th:text="${row.listenerFullName}">Слушатель</p>
+                        <p class="text-xs text-slate-500" th:text="${'Преподаватель: ' + row.teacherName}">Преподаватель: Не назначен</p>
+                    </td>
+                    <td class="px-4 py-3" th:text="${row.programTitle}">Программа</td>
+                    <td class="px-4 py-3" th:text="${row.queueTitle}">Очередь</td>
+                    <td class="px-4 py-3" th:text="${row.reason}">Причина</td>
+                    <td class="px-4 py-3" th:text="${row.ageDays}">0</td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold"
+                              th:classappend="${row.priorityLevelKey == 'critical'} ? ' bg-red-100 text-red-700'
+                                : (${row.priorityLevelKey == 'high'} ? ' bg-amber-100 text-amber-700'
+                                : (${row.priorityLevelKey == 'medium'} ? ' bg-blue-100 text-blue-700' : ' bg-slate-100 text-slate-700'))"
+                              th:text="${row.priorityLevelLabel + ' (' + row.priorityScore + ')'}"
+                              th:title="${row.priorityExplanation}">Высокий (101)</span>
+                        <p class="text-[11px] leading-4 text-slate-500 mt-1" th:text="${row.priorityExplanation}">Формула приоритета</p>
+                    </td>
+                    <td class="px-4 py-3">
+                        <a class="text-blue-600 hover:underline" th:href="@{${row.nextActionUrl}}">Открыть кейс</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(drilldownRows)}">
+                    <td colspan="8" class="px-4 py-8 text-center text-slate-500">Нет элементов для выбранных фильтров.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

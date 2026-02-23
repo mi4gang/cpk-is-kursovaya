@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация слушателя | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-neutral: #f1f5f9;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-neutral);
+            color: var(--text-main);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 350, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+<div class="w-full max-w-xl bg-white border border-[var(--border-color)] rounded-2xl shadow-lg overflow-hidden">
+    <div class="p-8 border-b border-[var(--border-color)]">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-lg bg-blue-100 text-[var(--primary-color)] flex items-center justify-center">
+                <span class="material-symbols-outlined">person_add</span>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight">Регистрация слушателя</h1>
+        </div>
+        <p class="text-sm text-[var(--text-muted)]">После регистрации можно создавать заявки, отслеживать прогресс и получать удостоверение в личном кабинете.</p>
+    </div>
+
+    <form th:action="@{/register}" th:object="${form}" method="post" class="p-8 grid grid-cols-1 md:grid-cols-2 gap-5">
+        <label class="block text-sm font-medium text-slate-700">Логин
+            <input type="text" th:field="*{username}" required
+                   class="mt-1.5 w-full rounded-xl border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+            <small class="text-rose-600 text-xs" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></small>
+        </label>
+
+        <label class="block text-sm font-medium text-slate-700">Email
+            <input type="email" th:field="*{email}" required
+                   class="mt-1.5 w-full rounded-xl border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+            <small class="text-rose-600 text-xs" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+        </label>
+
+        <label class="block text-sm font-medium text-slate-700">Пароль
+            <input type="password" th:field="*{password}" required
+                   class="mt-1.5 w-full rounded-xl border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+            <small class="text-rose-600 text-xs" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+        </label>
+
+        <label class="block text-sm font-medium text-slate-700">Подтверждение пароля
+            <input type="password" th:field="*{confirmPassword}" required
+                   class="mt-1.5 w-full rounded-xl border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+            <small class="text-rose-600 text-xs" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></small>
+        </label>
+
+        <label class="block text-sm font-medium text-slate-700 md:col-span-2">ФИО
+            <input type="text" th:field="*{fullName}" required
+                   class="mt-1.5 w-full rounded-xl border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+            <small class="text-rose-600 text-xs" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></small>
+        </label>
+
+        <label class="block text-sm font-medium text-slate-700 md:col-span-2">Телефон
+            <input type="text" th:field="*{phone}" required
+                   class="mt-1.5 w-full rounded-xl border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+            <small class="text-rose-600 text-xs" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small>
+        </label>
+
+        <div class="md:col-span-2 flex flex-wrap items-center gap-3 pt-2">
+            <button type="submit" class="bg-[var(--primary-color)] hover:bg-[var(--primary-hover)] text-white font-semibold px-5 py-2.5 rounded-xl transition-colors">
+                Зарегистрироваться
+            </button>
+            <a th:href="@{/login}" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold">
+                У меня уже есть аккаунт
+            </a>
+            <a th:href="@{/}" class="text-sm text-slate-500 hover:text-blue-600">На главную</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Завершенные услуги | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root { --primary: #2563eb; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader('admin-dashboard-v2')}"></div>
+
+<main class="max-w-7xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <a th:href="@{/admin/dashboard-v2}" class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-blue-600 mb-2">
+                <span class="material-symbols-outlined !text-base">arrow_back</span>
+                Назад в аналитику
+            </a>
+            <h1 class="text-3xl font-bold tracking-tight">Завершенные услуги</h1>
+            <p class="text-slate-500 mt-1">Закрытые кейсы по факту выдачи удостоверения; отдельно можно посмотреть ожидающих выдачу.</p>
+        </div>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+            <div>
+                <label class="text-xs font-semibold text-slate-500 uppercase">Дата от</label>
+                <input type="date" name="dateFrom" th:value="${dateFrom}" class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50">
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-500 uppercase">Дата до</label>
+                <input type="date" name="dateTo" th:value="${dateTo}" class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50">
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-500 uppercase">Удостоверение</label>
+                <select name="certificateState" class="mt-1.5 w-full rounded-lg border-slate-200 bg-slate-50">
+                    <option value="issued" th:selected="${certificateState == 'issued'}">Выдано</option>
+                    <option value="not_issued" th:selected="${certificateState == 'not_issued'}">Ожидают выдачу</option>
+                    <option value="all" th:selected="${certificateState == 'all'}">Все</option>
+                </select>
+            </div>
+            <button type="submit" class="px-4 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Применить</button>
+            <a th:href="@{/admin/dashboard-v2/completed}" class="px-4 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50 text-center">Сбросить</a>
+        </form>
+    </section>
+
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">Всего завершено</p>
+            <p class="text-2xl font-bold mt-2" th:text="${totalCount}">0</p>
+        </article>
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">С удостоверением</p>
+            <p class="text-2xl font-bold mt-2" th:text="${issuedCount}">0</p>
+        </article>
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">Без удостоверения</p>
+            <p class="text-2xl font-bold mt-2" th:text="${notIssuedCount}">0</p>
+        </article>
+        <article class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase">Оплачено по завершенным</p>
+            <p class="text-2xl font-bold mt-2" th:text="${#numbers.formatDecimal(paidAmount,1,'COMMA',2,'POINT')} + ' ₽'">0 ₽</p>
+        </article>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-auto">
+            <table class="w-full min-w-[1240px] text-sm">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3 text-left">ID заявки</th>
+                    <th class="px-4 py-3 text-left">Слушатель</th>
+                    <th class="px-4 py-3 text-left">Программа</th>
+                    <th class="px-4 py-3 text-left">Дата закрытия кейса</th>
+                    <th class="px-4 py-3 text-left">Оплата</th>
+                    <th class="px-4 py-3 text-left">Аттестация</th>
+                    <th class="px-4 py-3 text-left">Удостоверение</th>
+                    <th class="px-4 py-3 text-left">Кейс</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${rows}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                    <td class="px-4 py-3" th:text="${row.applicationId}">1</td>
+                    <td class="px-4 py-3 font-semibold" th:text="${row.listenerFullName}">Слушатель</td>
+                    <td class="px-4 py-3" th:text="${row.programTitle}">Программа</td>
+                    <td class="px-4 py-3" th:text="${row.closedAt}">2026-02-20</td>
+                    <td class="px-4 py-3">
+                        <p th:text="${row.paymentStatusLabel}">Оплачено</p>
+                        <p class="text-xs text-slate-500" th:text="${#numbers.formatDecimal(row.paymentAmount,1,'COMMA',2,'POINT')} + ' ₽'">0 ₽</p>
+                    </td>
+                    <td class="px-4 py-3">
+                        <p th:text="${row.assessmentStatusLabel}">Пройдена</p>
+                        <p class="text-xs text-slate-500"
+                           th:text="${row.assessmentScore != null ? 'Балл: ' + row.assessmentScore : 'Балл не выставлен'}">Балл</p>
+                    </td>
+                    <td class="px-4 py-3">
+                        <p th:text="${row.certificateStatusLabel}">Выдано</p>
+                        <p class="text-xs text-slate-500"
+                           th:text="${row.certificateNumber != null ? '№ ' + row.certificateNumber : 'Номер не присвоен'}">Номер</p>
+                        <p class="text-xs text-slate-500"
+                           th:text="${row.certificateIssueDate != null ? row.certificateIssueDate : 'Дата не зафиксирована'}">Дата</p>
+                    </td>
+                    <td class="px-4 py-3">
+                        <a class="text-blue-600 hover:underline" th:href="@{${row.caseUrl}}">Открыть кейс</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(rows)}">
+                    <td colspan="8" class="px-4 py-8 text-center text-slate-500">Нет завершенных кейсов по выбранным фильтрам.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

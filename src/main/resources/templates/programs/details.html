@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${program.title + ' | ЦПК ИС'}">Программа | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 380, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader(${activeItem})}"></div>
+
+<main class="max-w-7xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <a th:href="@{/programs}" class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-blue-600 mb-2">
+                <span class="material-symbols-outlined !text-base">arrow_back</span>
+                К каталогу программ
+            </a>
+            <h1 class="text-3xl font-bold tracking-tight" th:text="${program.title}">Название программы</h1>
+            <p class="text-slate-500 mt-1" th:text="${program.description}">Описание программы</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full bg-slate-100 text-xs font-semibold" th:text="${program.programType.label}"></span>
+            <span th:if="${program.active}" class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">Активна</span>
+            <span th:unless="${program.active}" class="px-3 py-1 rounded-full bg-slate-200 text-slate-600 text-xs font-semibold">Неактивна</span>
+        </div>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <article class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <p class="text-xs uppercase text-slate-500">Категория</p>
+            <p class="text-lg font-semibold mt-1" th:text="${program.category}"></p>
+        </article>
+        <article class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <p class="text-xs uppercase text-slate-500">Длительность</p>
+            <p class="text-lg font-semibold mt-1" th:text="${program.durationHours + ' ч.'}"></p>
+        </article>
+        <article class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <p class="text-xs uppercase text-slate-500">Период обучения</p>
+            <p class="text-lg font-semibold mt-1" th:text="${program.startDate + ' - ' + program.endDate}"></p>
+        </article>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-xl font-semibold mb-3">Документы для допуска</h2>
+        <p class="text-slate-600" th:if="${program.requiredDocsNote != null and !program.requiredDocsNote.isBlank()}"
+           th:text="${program.requiredDocsNote}"></p>
+        <p class="text-slate-500" th:if="${program.requiredDocsNote == null or program.requiredDocsNote.isBlank()}">
+            Требования по документам уточняются на консультации.
+        </p>
+
+        <div class="mt-5 flex flex-wrap items-center gap-2">
+            <a sec:authorize="!isAuthenticated()" th:href="@{/register}"
+               class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">Зарегистрироваться и подать заявку</a>
+            <a sec:authorize="hasRole('STUDENT')" th:href="@{/applications/new(programId=${program.id})}"
+               class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">Подать заявку</a>
+            <a sec:authorize="hasAnyRole('ADMIN','METHODIST')" th:href="@{/programs/{id}/edit(id=${program.id})}"
+               class="px-4 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Редактировать программу</a>
+            <span sec:authorize="hasRole('TEACHER')" class="text-sm text-slate-500">Доступен режим просмотра</span>
+        </div>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between gap-3 mb-4">
+            <h2 class="text-xl font-semibold">Похожие программы</h2>
+            <a th:href="@{/programs}" class="text-sm text-blue-600 hover:underline">Все программы</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a th:each="related : ${relatedPrograms}" th:href="@{/programs/{id}(id=${related.id})}"
+               class="block rounded-xl border border-slate-200 p-4 bg-slate-50 hover:bg-slate-100">
+                <p class="text-xs uppercase text-slate-500" th:text="${related.category}"></p>
+                <p class="font-semibold mt-1" th:text="${related.title}"></p>
+                <p class="text-xs text-slate-500 mt-2" th:text="${related.durationHours + ' ч.'}"></p>
+            </a>
+            <div th:if="${#lists.isEmpty(relatedPrograms)}"
+                 class="rounded-xl border border-slate-200 p-4 bg-slate-50 text-sm text-slate-500 md:col-span-3">
+                По этой категории пока нет других активных программ.
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

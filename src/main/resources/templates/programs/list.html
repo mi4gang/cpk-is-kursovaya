@@ -3,46 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Программы | ЦПК ИС</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
-</head>
-<body>
-<div th:replace="~{fragments :: topnav}"></div>
-<main class="container">
-    <h1>Программы</h1>
-    <form method="get" class="row">
-        <input type="text" name="q" th:value="${q}" placeholder="Поиск по названию">
-        <select name="sort">
-            <option value="title" th:selected="${sort == 'title'}">Название</option>
-            <option value="startDate" th:selected="${sort == 'startDate'}">Дата начала</option>
-            <option value="endDate" th:selected="${sort == 'endDate'}">Дата окончания</option>
-            <option value="durationHours" th:selected="${sort == 'durationHours'}">Часы</option>
-        </select>
-        <button type="submit">Применить</button>
-        <a class="btn" th:href="@{/programs/new}" sec:authorize="hasAnyRole('ADMIN','METHODIST')">+ Добавить</a>
-    </form>
+    <title>Каталог программ | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
 
-    <table>
-        <thead>
-        <tr><th>ID</th><th>Название</th><th>Часы</th><th>Период</th><th>Активна</th><th>Действия</th></tr>
-        </thead>
-        <tbody>
-        <tr th:each="p : ${programs}">
-            <td th:text="${p.id}"></td>
-            <td th:text="${p.title}"></td>
-            <td th:text="${p.durationHours}"></td>
-            <td th:text="${p.startDate + ' - ' + p.endDate}"></td>
-            <td th:text="${p.active ? 'Да' : 'Нет'}"></td>
-            <td class="actions" sec:authorize="hasAnyRole('ADMIN','METHODIST')">
-                <a th:href="@{/programs/{id}/edit(id=${p.id})}">Редактировать</a>
-                <form th:action="@{/programs/{id}/delete(id=${p.id})}" method="post" class="inline">
-                    <button type="submit">Удалить</button>
-                </form>
-            </td>
-            <td class="actions" sec:authorize="!hasAnyRole('ADMIN','METHODIST')">Только просмотр</td>
-        </tr>
-        </tbody>
-    </table>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 380, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader(${activeItem})}"></div>
+
+<main class="max-w-7xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight">Каталог образовательных программ</h1>
+            <p class="text-slate-500 mt-1">Реестр программ центра повышения квалификации.</p>
+        </div>
+        <a th:href="@{/programs/new}" sec:authorize="hasAnyRole('ADMIN','METHODIST')"
+           class="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">
+            <span class="material-symbols-outlined !text-lg">add</span>
+            Создать программу
+        </a>
+    </section>
+
+    <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div class="md:col-span-2">
+                <label class="text-xs font-semibold text-slate-500 uppercase">Поиск</label>
+                <div class="relative mt-1.5">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 !text-xl">search</span>
+                    <input class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                           type="text" name="q" th:value="${q}" placeholder="Поиск по названию">
+                </div>
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-500 uppercase">Сортировка</label>
+                <select name="sort" class="mt-1.5 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="title" th:selected="${sort == 'title'}">Название</option>
+                    <option value="startDate" th:selected="${sort == 'startDate'}">Дата начала</option>
+                    <option value="endDate" th:selected="${sort == 'endDate'}">Дата окончания</option>
+                    <option value="durationHours" th:selected="${sort == 'durationHours'}">Длительность</option>
+                </select>
+            </div>
+            <button type="submit" class="px-4 py-2 rounded-lg border border-slate-200 text-sm font-medium hover:bg-slate-50">Применить</button>
+        </form>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-auto">
+            <table class="w-full min-w-[980px] text-sm">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                    <th class="px-5 py-3 text-left">ID</th>
+                    <th class="px-5 py-3 text-left">Программа</th>
+                    <th class="px-5 py-3 text-left">Категория / Тип</th>
+                    <th class="px-5 py-3 text-left">Длительность</th>
+                    <th class="px-5 py-3 text-left">Период</th>
+                    <th class="px-5 py-3 text-left">Статус</th>
+                    <th class="px-5 py-3 text-left">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${programs}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                    <td class="px-5 py-4 text-slate-500" th:text="${p.id}"></td>
+                    <td class="px-5 py-4">
+                        <p class="font-semibold text-slate-900" th:text="${p.title}"></p>
+                        <p class="text-xs text-slate-500" th:text="${p.description}"></p>
+                    </td>
+                    <td class="px-5 py-4 text-slate-600">
+                        <p th:text="${p.category}"></p>
+                        <p class="text-xs uppercase" th:text="${p.programType.label}"></p>
+                    </td>
+                    <td class="px-5 py-4 text-slate-700" th:text="${p.durationHours + ' ч.'}"></td>
+                    <td class="px-5 py-4 text-slate-700" th:text="${p.startDate + ' - ' + p.endDate}"></td>
+                    <td class="px-5 py-4">
+                        <span th:if="${p.active}" class="px-2 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Активна</span>
+                        <span th:unless="${p.active}" class="px-2 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">Неактивна</span>
+                    </td>
+                    <td class="px-5 py-4">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a th:href="@{/programs/{id}(id=${p.id})}"
+                               class="px-3 py-1.5 text-xs rounded-lg border border-slate-200 hover:bg-slate-50">Подробнее</a>
+
+                            <div class="flex flex-wrap items-center gap-2" sec:authorize="hasAnyRole('ADMIN','METHODIST')">
+                            <a th:href="@{/programs/{id}/edit(id=${p.id})}" class="px-3 py-1.5 text-xs rounded-lg border border-slate-200 hover:bg-slate-50">Редактировать</a>
+                            <form th:action="@{/programs/{id}/delete(id=${p.id})}" method="post" class="inline"
+                                  onsubmit="return confirm('Удалить программу? Если есть связанные заявки, операция может завершиться ошибкой.');">
+                                <button type="submit" class="px-3 py-1.5 text-xs rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50">Удалить</button>
+                            </form>
+                            </div>
+
+                            <a sec:authorize="hasRole('STUDENT')" th:href="@{/applications/new(programId=${p.id})}"
+                               class="inline-flex px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white hover:bg-blue-700">Подать заявку</a>
+                            <a sec:authorize="!isAuthenticated()" th:href="@{/register}"
+                               class="inline-flex px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white hover:bg-blue-700">Подать заявку</a>
+                            <span sec:authorize="hasRole('TEACHER')" class="text-xs text-slate-500">Только просмотр</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(programs)}">
+                    <td colspan="7" class="px-5 py-8 text-center text-slate-500">Нет программ для отображения</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 </body>
 </html>

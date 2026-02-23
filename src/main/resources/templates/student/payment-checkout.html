@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оплата программы | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+        }
+
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 380, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<header class="bg-white border-b border-[var(--border)] sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <a th:href="@{/}" class="w-10 h-10 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center">
+                <span class="material-symbols-outlined">school</span>
+            </a>
+            <span class="text-xl font-extrabold tracking-tight">ЦПК <span class="text-[var(--primary)]">ИС</span></span>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-[var(--text-muted)]">
+            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/programs}">Программы</a>
+            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/student/cabinet}">Мой кабинет</a>
+            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/student/profile}">Мой профиль</a>
+            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/about}">Об авторе</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+            <form th:action="@{/logout}" method="post">
+                <button class="px-3 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Выйти</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-3xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section>
+        <h1 class="text-3xl font-bold tracking-tight">Оплата программы</h1>
+        <p class="text-slate-500 mt-1">Демо-заглушка оплаты: после подтверждения списания заявка переходит в этап открытия доступа.</p>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <p><span class="text-slate-500">Заявка:</span> <span class="font-semibold" th:text="${studentApplication.id}"></span></p>
+            <p><span class="text-slate-500">Программа:</span> <span class="font-semibold" th:text="${studentApplication.program.title}"></span></p>
+            <p><span class="text-slate-500">Тип:</span> <span th:text="${studentApplication.program.programType.label}"></span></p>
+            <p><span class="text-slate-500">К оплате:</span>
+                <span class="font-semibold" th:text="${amount} + ' ₽'"></span>
+            </p>
+        </div>
+
+        <article th:if="${alreadyPaid}" class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+            <h2 class="font-semibold text-emerald-800">Заявка уже оплачена</h2>
+            <p class="text-sm text-emerald-700 mt-1">Оплата уже зафиксирована. Проверьте текущий этап в личном кабинете.</p>
+        </article>
+
+        <div class="flex items-center gap-3">
+            <form th:unless="${alreadyPaid}" th:action="@{/student/payments/{applicationId}/pay(applicationId=${studentApplication.id})}" method="post">
+                <button type="submit" class="px-5 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">
+                    Оплатить (демо)
+                </button>
+            </form>
+            <a th:href="@{/applications}" class="px-5 py-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
+                К моим заявкам
+            </a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

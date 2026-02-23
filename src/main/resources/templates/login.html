@@ -3,27 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход | ЦПК ИС</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <title>Вход в систему | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-neutral: #f1f5f9;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-neutral);
+            color: var(--text-main);
+        }
+
+        .login-card {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05), 0 20px 25px -5px rgb(0 0 0 / 0.03);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 350, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
 </head>
-<body class="auth-page">
-<main class="auth-card">
-    <h1>Вход в систему</h1>
-    <p>Информационная система центра повышения квалификации</p>
-    <p class="hint">Демо-аккаунты: admin/admin123, methodist/method123, teacher/teacher123, student/student123</p>
+<body class="min-h-screen flex items-center justify-center p-4">
+<div class="w-full max-w-md">
+    <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white shadow-sm border border-[var(--border-color)] mb-4">
+            <span class="material-symbols-outlined text-[var(--primary-color)] text-4xl">school</span>
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight">ЦПК ИС</h1>
+        <p class="text-[var(--text-muted)] mt-1">Информационная система управления обучением</p>
+    </div>
 
-    <div th:if="${param.error}" class="alert">Неверный логин или пароль</div>
-    <div th:if="${param.logout}" class="success">Вы вышли из системы</div>
+    <div class="login-card bg-white rounded-2xl border border-[var(--border-color)] overflow-hidden">
+        <div class="p-8">
+            <h2 class="text-lg font-semibold mb-6">Авторизация</h2>
 
-    <form th:action="@{/login}" method="post">
-        <label>Логин
-            <input type="text" name="username" required>
-        </label>
-        <label>Пароль
-            <input type="password" name="password" required>
-        </label>
-        <button type="submit">Войти</button>
-    </form>
-</main>
+            <div th:if="${param.error}" class="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3">
+                <span class="material-symbols-outlined text-red-500 text-xl leading-none">error</span>
+                <div class="text-sm text-red-800">Неверный логин или пароль. Пожалуйста, попробуйте снова.</div>
+            </div>
+            <div th:if="${param.logout}" class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-100 flex items-start gap-3">
+                <span class="material-symbols-outlined text-emerald-600 text-xl leading-none">check_circle</span>
+                <div class="text-sm text-emerald-800">Вы вышли из системы.</div>
+            </div>
+            <div th:if="${param.registered}" class="mb-6 p-4 rounded-xl bg-blue-50 border border-blue-100 flex items-start gap-3">
+                <span class="material-symbols-outlined text-blue-600 text-xl leading-none">verified</span>
+                <div class="text-sm text-blue-800">Регистрация успешна. Войдите под новым аккаунтом.</div>
+            </div>
+
+            <form th:action="@{/login}" method="post" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-[var(--text-main)] mb-1.5" for="username">Имя пользователя</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">person</span>
+                        <input class="block w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-[var(--primary-color)] transition-all outline-none text-sm"
+                               id="username" name="username" placeholder="student" type="text" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-[var(--text-main)] mb-1.5" for="password">Пароль</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">lock</span>
+                        <input class="block w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-[var(--primary-color)] transition-all outline-none text-sm"
+                               id="password" name="password" placeholder="••••••••" type="password" required>
+                    </div>
+                </div>
+
+                <button class="w-full bg-[var(--primary-color)] hover:bg-[var(--primary-hover)] text-white font-medium py-2.5 rounded-xl transition-colors shadow-sm"
+                        type="submit">
+                    Войти в систему
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-gray-50 p-6 border-t border-[var(--border-color)]">
+            <p class="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">Демо-доступ и помощь</p>
+            <div class="grid grid-cols-1 gap-3">
+                <div class="p-3 bg-white border border-[var(--border-color)] rounded-xl">
+                    <p class="text-sm font-medium">admin / admin123</p>
+                    <p class="text-[10px] text-[var(--text-muted)] leading-tight">Администратор</p>
+                </div>
+                <div class="p-3 bg-white border border-[var(--border-color)] rounded-xl">
+                    <p class="text-sm font-medium">methodist / method123</p>
+                    <p class="text-[10px] text-[var(--text-muted)] leading-tight">Методист</p>
+                </div>
+                <div class="p-3 bg-white border border-[var(--border-color)] rounded-xl">
+                    <p class="text-sm font-medium">teacher / teacher123</p>
+                    <p class="text-[10px] text-[var(--text-muted)] leading-tight">Преподаватель: Ильин Павел Сергеевич</p>
+                </div>
+                <div class="p-3 bg-white border border-[var(--border-color)] rounded-xl">
+                    <p class="text-sm font-medium">teacher2 / teacher223</p>
+                    <p class="text-[10px] text-[var(--text-muted)] leading-tight">Преподаватель: Соколова Мария Андреевна</p>
+                </div>
+                <div class="p-3 bg-white border border-[var(--border-color)] rounded-xl">
+                    <p class="text-sm font-medium">teacher3 / teacher323</p>
+                    <p class="text-[10px] text-[var(--text-muted)] leading-tight">Преподаватель: Егоров Дмитрий Олегович</p>
+                </div>
+                <div class="p-3 bg-white border border-[var(--border-color)] rounded-xl">
+                    <p class="text-sm font-medium">student / student123</p>
+                    <p class="text-[10px] text-[var(--text-muted)] leading-tight">Слушатель</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap gap-4 justify-center text-xs">
+                <a class="text-[var(--text-muted)] hover:text-[var(--primary-color)] flex items-center gap-1" th:href="@{/}">
+                    <span class="material-symbols-outlined text-base">home</span>На главную
+                </a>
+                <a class="text-[var(--text-muted)] hover:text-[var(--primary-color)] flex items-center gap-1" th:href="@{/register}">
+                    <span class="material-symbols-outlined text-base">person_add</span>Регистрация
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-8 text-center">
+        <p class="text-xs text-[var(--text-muted)]">© 2026 ЦПК ИС. Все права защищены.</p>
+    </footer>
+</div>
 </body>
 </html>

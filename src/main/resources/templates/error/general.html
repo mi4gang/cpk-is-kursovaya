@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ошибка | ЦПК ИС</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">body { font-family: 'Inter', sans-serif; @apply bg-slate-100 text-slate-900; }</style>
 </head>
-<body>
-<main class="container">
-    <section class="card">
-        <h1>Ошибка</h1>
-        <p th:text="${message != null ? message : 'Произошла ошибка. Проверьте данные и вернитесь назад.'}"></p>
-        <details>
-            <summary>Технические детали</summary>
-            <p th:text="${details}"></p>
-        </details>
-        <p><a th:href="@{/}">Вернуться на главную</a></p>
-    </section>
-</main>
+<body class="min-h-screen flex items-center justify-center p-4">
+<div class="max-w-lg w-full bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+    <h1 class="text-2xl font-bold mb-2">Произошла ошибка</h1>
+    <p class="text-slate-600" th:text="${message != null ? message : 'Произошла ошибка. Проверьте данные и вернитесь назад.'}"></p>
+    <a th:href="@{/dashboard}" sec:authorize="isAuthenticated()"
+       class="inline-flex mt-5 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">Вернуться на главную</a>
+    <a th:href="@{/}" sec:authorize="!isAuthenticated()"
+       class="inline-flex mt-5 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">Вернуться на главную</a>
+</div>
 </body>
 </html>

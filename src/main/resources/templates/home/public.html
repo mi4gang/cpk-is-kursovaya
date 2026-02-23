@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЦПК ИС — Центр повышения квалификации</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --surface: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background-color: #fff;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 350, 'GRAD' 0, 'opsz' 24;
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[var(--border)]">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <a th:href="@{/}" class="w-10 h-10 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center">
+                <span class="material-symbols-outlined">school</span>
+            </a>
+            <span class="text-xl font-extrabold tracking-tight">ЦПК <span class="text-[var(--primary)]">ИС</span></span>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-[var(--text-muted)]">
+            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/programs}">Программы</a>
+            <a class="hover:text-[var(--primary)] transition-colors" href="/#consultation" sec:authorize="!isAuthenticated()">Консультация</a>
+            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/student/cabinet}" sec:authorize="hasRole('STUDENT')">Мой кабинет</a>
+            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/student/profile}" sec:authorize="hasRole('STUDENT')">Мой профиль</a>
+            <a class="hover:text-[var(--primary)] transition-colors" th:href="@{/about}">Об авторе</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+            <a class="text-sm font-semibold text-[var(--text-main)] hover:text-[var(--primary)]" th:href="@{/login}" sec:authorize="!isAuthenticated()">Войти</a>
+            <a class="bg-[var(--primary)] text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-[var(--primary-hover)] transition-colors"
+               th:href="@{/register}" sec:authorize="!isAuthenticated()">Регистрация</a>
+            <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+                <button class="px-3 py-2 rounded-lg border border-slate-200 text-sm hover:bg-slate-50">Выйти</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section class="relative py-24 lg:py-28 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="max-w-3xl">
+                <h1 class="text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight mb-8">
+                    Профессиональное развитие
+                    <br>в цифровой экономике
+                </h1>
+                <p class="text-xl text-[var(--text-muted)] leading-relaxed mb-10">
+                    Операционная платформа центра повышения квалификации: от выбора программы и подачи заявки до аттестации и выдачи удостоверения.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a class="bg-[var(--primary)] text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-[var(--primary-hover)] transition-all flex items-center justify-center gap-2"
+                       th:href="@{/programs}">
+                        Выбрать программу
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </a>
+                    <a class="border border-[var(--border)] bg-white text-[var(--text-main)] px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-50 transition-all"
+                       href="/#consultation">
+                        Получить консультацию
+                    </a>
+                </div>
+
+                <div class="mt-10 flex flex-wrap items-center gap-6 text-sm text-[var(--text-muted)]">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[var(--primary)]">check_circle</span>
+                        Государственный диплом
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[var(--primary)]">check_circle</span>
+                        Онлайн формат
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[var(--primary)]">check_circle</span>
+                        Пробный доступ 3 дня
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[var(--primary)]">check_circle</span>
+                        Пожизненный доступ к учебным материалам
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-[var(--surface)] border-y border-[var(--border)]">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-16">Как проходит обучение</h2>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-8 relative">
+                <div class="relative z-10 flex flex-col items-center">
+                    <div class="workflow-step w-16 h-16 bg-white border-2 border-[var(--primary)] rounded-2xl flex items-center justify-center mb-5 relative">
+                        <span class="material-symbols-outlined text-[var(--primary)] text-3xl">menu_book</span>
+                    </div>
+                    <h3 class="font-bold mb-2">Программа</h3>
+                    <p class="text-sm text-[var(--text-muted)]">Выбор курса</p>
+                </div>
+                <div class="relative z-10 flex flex-col items-center">
+                    <div class="workflow-step w-16 h-16 bg-white border-2 border-[var(--border)] rounded-2xl flex items-center justify-center mb-5 relative">
+                        <span class="material-symbols-outlined text-[var(--text-muted)] text-3xl">edit_note</span>
+                    </div>
+                    <h3 class="font-bold mb-2">Заявка</h3>
+                    <p class="text-sm text-[var(--text-muted)]">Подача и документы</p>
+                </div>
+                <div class="relative z-10 flex flex-col items-center">
+                    <div class="workflow-step w-16 h-16 bg-white border-2 border-[var(--border)] rounded-2xl flex items-center justify-center mb-5 relative">
+                        <span class="material-symbols-outlined text-[var(--text-muted)] text-3xl">payments</span>
+                    </div>
+                    <h3 class="font-bold mb-2">Оплата</h3>
+                    <p class="text-sm text-[var(--text-muted)]">100% предоплата</p>
+                </div>
+                <div class="relative z-10 flex flex-col items-center">
+                    <div class="workflow-step w-16 h-16 bg-white border-2 border-[var(--border)] rounded-2xl flex items-center justify-center mb-5 relative">
+                        <span class="material-symbols-outlined text-[var(--text-muted)] text-3xl">school</span>
+                    </div>
+                    <h3 class="font-bold mb-2">Обучение</h3>
+                    <p class="text-sm text-[var(--text-muted)]">Прогресс и аттестация</p>
+                </div>
+                <div class="relative z-10 flex flex-col items-center">
+                    <div class="workflow-step w-16 h-16 bg-white border-2 border-[var(--border)] rounded-2xl flex items-center justify-center mb-5 relative">
+                        <span class="material-symbols-outlined text-[var(--text-muted)] text-3xl">workspace_premium</span>
+                    </div>
+                    <h3 class="font-bold mb-2">Удостоверение</h3>
+                    <p class="text-sm text-[var(--text-muted)]">Выдача документа</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-end justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">Популярные программы</h2>
+                    <p class="text-sm text-[var(--text-muted)]">Актуальные направления центра повышения квалификации</p>
+                </div>
+                <a class="text-sm font-semibold text-[var(--primary)] hover:underline" th:href="@{/programs}">Весь каталог</a>
+            </div>
+
+            <div class="bg-white border border-[var(--border)] rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                    <tr>
+                        <th class="px-5 py-3 text-left">Программа</th>
+                        <th class="px-5 py-3 text-left">Тип</th>
+                        <th class="px-5 py-3 text-left">Категория</th>
+                        <th class="px-5 py-3 text-left">Длительность</th>
+                        <th class="px-5 py-3 text-left">Период</th>
+                        <th class="px-5 py-3 text-left"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${programs}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                        <td class="px-5 py-4 font-semibold text-slate-900" th:text="${p.title}"></td>
+                        <td class="px-5 py-4 text-slate-600" th:text="${p.programType.label}"></td>
+                        <td class="px-5 py-4 text-slate-600" th:text="${p.category}"></td>
+                        <td class="px-5 py-4 text-slate-600" th:text="${p.durationHours + ' ч'}"></td>
+                        <td class="px-5 py-4 text-slate-600" th:text="${p.startDate + ' - ' + p.endDate}"></td>
+                        <td class="px-5 py-4">
+                            <a class="text-sm font-semibold text-[var(--primary)] hover:underline"
+                               th:href="@{/programs/{id}(id=${p.id})}">Подробнее</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(programs)}">
+                        <td colspan="6" class="px-5 py-8 text-center text-slate-500">Программы будут опубликованы позже.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="consultation" class="py-16 bg-[var(--surface)] border-y border-[var(--border)]">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
+                <h2 class="text-2xl font-bold mb-2">Консультация по выбору программы</h2>
+                <p class="text-slate-600 mb-5">Оставьте заявку, и методист свяжется с вами для подбора программы.</p>
+
+                <div th:if="${consultationSuccess}" class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                    Заявка отправлена. Спасибо, <span class="font-semibold" th:text="${submittedName}">пользователь</span>.
+                </div>
+                <div th:if="${consultationError}" class="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
+                     th:text="${consultationError}"></div>
+
+                <form action="/consultation" th:object="${form}" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <label class="text-sm font-medium text-slate-700">
+                        ФИО
+                        <input type="text" th:field="*{fullName}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                    </label>
+                    <label class="text-sm font-medium text-slate-700">
+                        Телефон
+                        <input type="text" th:field="*{phone}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                    </label>
+                    <label class="text-sm font-medium text-slate-700">
+                        Email
+                        <input type="email" th:field="*{email}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                    </label>
+                    <label class="text-sm font-medium text-slate-700">
+                        Интересующее направление
+                        <input type="text" th:field="*{interest}" required class="mt-1.5 w-full rounded-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                    </label>
+                    <label class="md:col-span-2 text-sm font-medium text-slate-700">
+                        Комментарий
+                        <textarea th:field="*{comment}" rows="3" class="mt-1.5 w-full rounded-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    </label>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="px-5 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">Отправить заявку</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-slate-950 text-white py-12">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+                <p class="text-4xl font-extrabold mb-1" th:text="${#numbers.formatInteger(#lists.size(programs) * 20, 0)} + '+'">120+</p>
+                <p class="text-sm text-slate-300">Текущих слушателей</p>
+            </div>
+            <div>
+                <p class="text-4xl font-extrabold mb-1" th:text="${#lists.size(programs)} + '+'">24+</p>
+                <p class="text-sm text-slate-300">Активных программ</p>
+            </div>
+            <div>
+                <p class="text-4xl font-extrabold mb-1">85%</p>
+                <p class="text-sm text-slate-300">Успешных аттестаций</p>
+            </div>
+            <div>
+                <p class="text-4xl font-extrabold mb-1">200+</p>
+                <p class="text-sm text-slate-300">Выданных удостоверений</p>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

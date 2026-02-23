@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Операционная аналитика | ЦПК ИС</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        :root { --primary: #2563eb; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div th:replace="~{fragments :: roleHeader('admin-dashboard-v2')}"></div>
+
+<main class="max-w-7xl mx-auto px-5 lg:px-8 py-8 space-y-6">
+    <section>
+        <h1 class="text-3xl font-bold tracking-tight">Операционная аналитика</h1>
+        <p class="text-slate-500 mt-1">Единый экран для контроля воронки, рисков и действий по заявкам.</p>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold">Состояние системы</h2>
+            <span class="text-xs text-slate-500">6 ключевых индикаторов</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            <a th:each="kpi : ${systemHealthKpis}" th:href="@{${kpi.drilldownUrl}}" class="rounded-xl border border-slate-200 p-4 hover:border-blue-300">
+                <p class="text-sm text-slate-500" th:text="${kpi.title}">KPI</p>
+                <p class="text-3xl font-bold mt-1" th:text="${kpi.value}">0</p>
+                <p class="text-xs text-slate-400 mt-2" th:text="${kpi.subtitle}">описание</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold">Финансы</h2>
+            <div class="text-xs text-slate-500">
+                <a th:href="@{/payments}" class="text-blue-600 hover:underline">Открыть оплаты</a>
+                <span class="mx-1">•</span>
+                <a th:href="@{/applications(paymentState='UNPAID')}" class="text-blue-600 hover:underline">Открыть неоплаченные заявки</a>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 text-sm">
+            <a th:href="@{${financeSummary.paidUrl}}" class="rounded-lg border border-slate-200 p-4 hover:border-blue-300">
+                <p class="text-slate-500">Получено</p>
+                <p class="text-2xl font-bold mt-1" th:text="${#numbers.formatDecimal(financeSummary.paidAmount,1,'COMMA',2,'POINT')} + ' ₽'">0 ₽</p>
+                <p class="text-xs text-slate-400 mt-2">Оплаченные платежи</p>
+            </a>
+            <a th:href="@{${financeSummary.pendingUrl}}" class="rounded-lg border border-slate-200 p-4 hover:border-blue-300">
+                <p class="text-slate-500">Ожидается</p>
+                <p class="text-2xl font-bold mt-1" th:text="${#numbers.formatDecimal(financeSummary.pendingAmount,1,'COMMA',2,'POINT')} + ' ₽'">0 ₽</p>
+                <p class="text-xs text-slate-400 mt-2">Платежи в ожидании</p>
+            </a>
+            <a th:href="@{${financeSummary.failedUrl}}" class="rounded-lg border border-slate-200 p-4 hover:border-blue-300">
+                <p class="text-slate-500">Неуспешно</p>
+                <p class="text-2xl font-bold mt-1" th:text="${#numbers.formatDecimal(financeSummary.failedAmount,1,'COMMA',2,'POINT')} + ' ₽'">0 ₽</p>
+                <p class="text-xs text-slate-400 mt-2">Платежи с ошибкой</p>
+            </a>
+            <a th:href="@{${financeSummary.squeezeUrl}}" class="rounded-lg border border-slate-200 p-4 hover:border-blue-300">
+                <p class="text-slate-500">Потенциал к дожиму</p>
+                <p class="text-2xl font-bold mt-1" th:text="${financeSummary.squeezeCount}">0</p>
+                <p class="text-xs text-slate-400 mt-2">Подтверждены документы, но нет оплаты</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold">Завершенные услуги</h2>
+            <a th:href="@{/admin/dashboard-v2/completed(dateFrom=${completedSummary.dateFrom},dateTo=${completedSummary.dateTo})}" class="text-sm text-blue-600 hover:underline">Открыть завершенные</a>
+        </div>
+        <p class="text-xs text-slate-500 mb-4"
+           th:text="${'Период: ' + completedSummary.dateFrom + ' — ' + completedSummary.dateTo}">Период</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 text-sm">
+            <a th:href="@{/admin/dashboard-v2/completed(dateFrom=${completedSummary.dateFrom},dateTo=${completedSummary.dateTo})}" class="rounded-lg border border-slate-200 p-4 hover:border-blue-300">
+                <p class="text-slate-500">Завершено за период</p>
+                <p class="text-2xl font-bold mt-1" th:text="${completedSummary.completedCount}">0</p>
+            </a>
+            <a th:href="@{/admin/dashboard-v2/completed(dateFrom=${completedSummary.dateFrom},dateTo=${completedSummary.dateTo},certificateState='issued')}" class="rounded-lg border border-slate-200 p-4 hover:border-blue-300">
+                <p class="text-slate-500">С выданным удостоверением</p>
+                <p class="text-2xl font-bold mt-1" th:text="${completedSummary.issuedCount}">0</p>
+            </a>
+            <a th:href="@{/admin/dashboard-v2/completed(dateFrom=${completedSummary.dateFrom},dateTo=${completedSummary.dateTo},certificateState='not_issued')}" class="rounded-lg border border-slate-200 p-4 hover:border-blue-300">
+                <p class="text-slate-500">Ожидают удостоверение</p>
+                <p class="text-2xl font-bold mt-1" th:text="${completedSummary.notIssuedCount}">0</p>
+            </a>
+            <a th:href="@{/admin/dashboard-v2/completed(dateFrom=${completedSummary.dateFrom},dateTo=${completedSummary.dateTo})}" class="rounded-lg border border-slate-200 p-4 hover:border-blue-300">
+                <p class="text-slate-500">Оплачено по завершенным</p>
+                <p class="text-2xl font-bold mt-1" th:text="${#numbers.formatDecimal(completedSummary.paidAmount,1,'COMMA',2,'POINT')} + ' ₽'">0 ₽</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold">Сквозная воронка</h2>
+            <span class="text-xs text-slate-500">Клик по этапу открывает детали</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
+            <a th:each="stage : ${funnelStages}" th:href="@{${stage.drilldownUrl}}" class="rounded-lg border border-slate-200 p-3 hover:border-blue-300">
+                <p class="text-xs uppercase text-slate-500" th:text="${stage.title}">Этап</p>
+                <p class="text-2xl font-bold mt-1" th:text="${stage.count}">0</p>
+                <p class="text-xs text-slate-400 mt-1" th:text="${stage.sharePercent + '% от управляемого потока'}">0%</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <article class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden xl:col-span-2">
+            <div class="px-5 py-4 border-b border-slate-100">
+                <h2 class="font-semibold">Операционные риски: узкие места и SLA</h2>
+            </div>
+            <div class="overflow-auto">
+                <table class="w-full min-w-[900px] text-sm">
+                    <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                    <tr>
+                        <th class="px-4 py-3 text-left">Очередь</th>
+                        <th class="px-4 py-3 text-left">Элементов</th>
+                        <th class="px-4 py-3 text-left">Средний возраст</th>
+                        <th class="px-4 py-3 text-left">Макс. возраст</th>
+                        <th class="px-4 py-3 text-left">Риск</th>
+                        <th class="px-4 py-3 text-left">Что делать</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="row : ${bottlenecks}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                        <td class="px-4 py-3 font-semibold">
+                            <a class="text-blue-600 hover:underline" th:href="@{${row.drilldownUrl}}" th:text="${row.title}">Очередь</a>
+                        </td>
+                        <td class="px-4 py-3" th:text="${row.itemsCount}">0</td>
+                        <td class="px-4 py-3" th:text="${row.avgAgeDays + ' дн.'}">0</td>
+                        <td class="px-4 py-3" th:text="${row.maxAgeDays + ' дн.'}">0</td>
+                        <td class="px-4 py-3">
+                            <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold"
+                                  th:classappend="${row.riskLevelKey == 'critical'} ? ' bg-red-100 text-red-700'
+                                    : (${row.riskLevelKey == 'high'} ? ' bg-amber-100 text-amber-700'
+                                    : (${row.riskLevelKey == 'medium'} ? ' bg-blue-100 text-blue-700' : ' bg-slate-100 text-slate-700'))"
+                                  th:text="${row.riskLevelLabel}">Низкий</span>
+                        </td>
+                        <td class="px-4 py-3" th:text="${row.nextAction}">Действие</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(bottlenecks)}">
+                        <td colspan="6" class="px-4 py-8 text-center text-slate-500">Сейчас узких мест нет.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
+        <article class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100">
+                <h2 class="font-semibold">Нагрузка преподавателей</h2>
+            </div>
+            <div class="overflow-auto">
+                <table class="w-full min-w-[480px] text-sm">
+                    <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                    <tr>
+                        <th class="px-4 py-3 text-left">Преподаватель</th>
+                        <th class="px-4 py-3 text-left">Активные слушатели</th>
+                        <th class="px-4 py-3 text-left">Риск</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="row : ${teacherRiskRows}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                        <td class="px-4 py-3 font-semibold">
+                            <a th:href="@{${row.drilldownUrl}}" class="text-blue-600 hover:underline" th:text="${row.teacherName}">Преподаватель</a>
+                        </td>
+                        <td class="px-4 py-3" th:text="${row.currentStudents}"></td>
+                        <td class="px-4 py-3">
+                            <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold"
+                                  th:classappend="${row.riskLevelKey == 'critical'} ? ' bg-red-100 text-red-700'
+                                    : (${row.riskLevelKey == 'high'} ? ' bg-amber-100 text-amber-700'
+                                    : (${row.riskLevelKey == 'medium'} ? ' bg-blue-100 text-blue-700' : ' bg-slate-100 text-slate-700'))"
+                                  th:title="${row.riskExplanation}"
+                                  th:text="${row.riskLevelLabel + ' (' + row.riskScore + ')'}">Низкий (0)</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(teacherRiskRows)}">
+                        <td colspan="3" class="px-4 py-8 text-center text-slate-500">Преподаватели не найдены.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <h2 class="font-semibold">Операционные действия на сегодня</h2>
+            <div class="text-sm text-slate-500">
+                <a th:href="@{/admin/dashboard-v2/drilldown(queueType='all',sort='priority_desc')}" class="text-blue-600 hover:underline">Открыть полный список</a>
+                <span class="mx-1">•</span>
+                <a th:href="@{/applications}" class="text-blue-600 hover:underline">Открыть очередь в реестре</a>
+            </div>
+        </div>
+        <div class="overflow-auto">
+            <table class="w-full min-w-[1100px] text-sm">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3 text-left">ID</th>
+                    <th class="px-4 py-3 text-left">Слушатель</th>
+                    <th class="px-4 py-3 text-left">Программа</th>
+                    <th class="px-4 py-3 text-left">Очередь</th>
+                    <th class="px-4 py-3 text-left">Возраст</th>
+                    <th class="px-4 py-3 text-left">Приоритет</th>
+                    <th class="px-4 py-3 text-left">Кейс</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${actionItems}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                    <td class="px-4 py-3" th:text="${row.applicationId}"></td>
+                    <td class="px-4 py-3 font-semibold" th:text="${row.listenerFullName}"></td>
+                    <td class="px-4 py-3" th:text="${row.programTitle}"></td>
+                    <td class="px-4 py-3" th:text="${row.queueTitle}"></td>
+                    <td class="px-4 py-3" th:text="${row.ageDays + ' дн.'}"></td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold"
+                              th:classappend="${row.priorityLevelKey == 'critical'} ? ' bg-red-100 text-red-700'
+                                : (${row.priorityLevelKey == 'high'} ? ' bg-amber-100 text-amber-700'
+                                : (${row.priorityLevelKey == 'medium'} ? ' bg-blue-100 text-blue-700' : ' bg-slate-100 text-slate-700'))"
+                              th:title="${row.priorityExplanation}"
+                              th:text="${row.priorityLevelLabel + ' (' + row.priorityScore + ')'}">Высокий (100)</span>
+                        <p class="text-[11px] leading-4 text-slate-500 mt-1" th:text="${row.priorityExplanation}">Формула приоритета</p>
+                    </td>
+                    <td class="px-4 py-3">
+                        <a class="text-blue-600 hover:underline" th:href="@{${row.nextActionUrl}}">Открыть кейс</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(actionItems)}">
+                    <td colspan="7" class="px-4 py-8 text-center text-slate-500">Срочных действий на сегодня нет.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <article class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden xl:col-span-2">
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h2 class="font-semibold">Аналитика по программам</h2>
+                <a th:href="@{/applications}" class="text-sm text-blue-600 hover:underline">Открыть заявки</a>
+            </div>
+            <div class="overflow-auto">
+                <table class="w-full min-w-[860px] text-sm">
+                    <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                    <tr>
+                        <th class="px-4 py-3 text-left">Программа</th>
+                        <th class="px-4 py-3 text-left">Спрос (заявки)</th>
+                        <th class="px-4 py-3 text-left">Активные слушатели</th>
+                        <th class="px-4 py-3 text-left">Оплачено, ₽</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="entry : ${programAnalytics}" class="border-t border-slate-100 hover:bg-slate-50/70">
+                        <td class="px-4 py-3 font-semibold">
+                            <a th:href="@{${entry.drilldownUrl}}" class="text-blue-600 hover:underline"
+                               th:text="${entry.programTitle}">Программа</a>
+                        </td>
+                        <td class="px-4 py-3" th:text="${entry.demandCount}"></td>
+                        <td class="px-4 py-3" th:text="${entry.activeListeners}"></td>
+                        <td class="px-4 py-3" th:text="${#numbers.formatDecimal(entry.paidAmount,1,'COMMA',2,'POINT')}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(programAnalytics)}">
+                        <td colspan="4" class="px-4 py-8 text-center text-slate-500">Нет данных по программам.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
+        <article class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <h2 class="font-semibold mb-4">Структура контингента</h2>
+            <div class="space-y-4 text-sm" th:if="${!#lists.isEmpty(contingentRows)}">
+                <div th:each="entry : ${contingentRows}">
+                    <div class="flex items-center justify-between">
+                        <span th:text="${entry.title}">Тип</span>
+                        <span class="font-semibold" th:text="${entry.percent + '%'}">0%</span>
+                    </div>
+                    <div class="h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="h-full bg-blue-500" th:style="${'width:' + entry.percent + '%'}"></div>
+                    </div>
+                    <p class="text-xs text-slate-500" th:text="${entry.listenersCount + ' слуш.'}">0 слуш.</p>
+                </div>
+            </div>
+            <p th:if="${#lists.isEmpty(contingentRows)}" class="text-sm text-slate-500">Нет данных для построения структуры.</p>
+        </article>
+    </section>
+</main>
+</body>
+</html>

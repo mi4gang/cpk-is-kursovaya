@@ -1,6 +1,8 @@
 package ru.cpk.system.controller;
 
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.ui.Model;
@@ -15,35 +17,37 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler({BindException.class, MethodArgumentNotValidException.class, ConstraintViolationException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleValidation(Exception ex, Model model) {
+        log.warn("Validation error handled", ex);
         model.addAttribute("message", "Произошла ошибка. Проверьте данные и вернитесь назад.");
-        model.addAttribute("details", ex.getMessage());
         return "error/general";
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleAccessDenied(AccessDeniedException ex, Model model) {
+        log.warn("Access denied handled", ex);
         model.addAttribute("message", "Недостаточно прав для выполнения операции.");
-        model.addAttribute("details", ex.getMessage());
         return "error/general";
     }
 
     @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFound(Exception ex, Model model) {
+        log.debug("Not found handled", ex);
         model.addAttribute("message", "Страница не найдена.");
-        model.addAttribute("details", ex.getMessage());
         return "error/404";
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleGeneral(Exception ex, Model model) {
+        log.error("Unhandled exception", ex);
         model.addAttribute("message", "Произошла ошибка. Проверьте данные и вернитесь назад.");
-        model.addAttribute("details", ex.getMessage());
         return "error/general";
     }
 }
