@@ -163,8 +163,8 @@ public class StudentCabinetController {
             .put(normalizedType, new MockUploadedDocument(safeFileName, LocalDateTime.now()));
         redirectAttributes.addFlashAttribute(
             "uploadSuccess",
-            "Документ \"" + documentTypeLabel(documentType) + "\" принят как заглушка: "
-                + safeFileName + ". В демо-версии файл не сохраняется."
+            "Документ \"" + documentTypeLabel(documentType) + "\" принят: "
+                + safeFileName + ". В демонстрационном контуре файл не сохраняется."
         );
         return "redirect:/student/profile";
     }
@@ -227,9 +227,9 @@ public class StudentCabinetController {
         Map<String, MockUploadedDocument> userDocs = mockUploadedDocuments.getOrDefault(username, Map.of());
         MockUploadedDocument uploadedDocument = userDocs.get(documentType);
         if (uploadedDocument == null) {
-            return new MockDocumentRow(title, "Не прикреплен (mock)", null);
+            return new MockDocumentRow(title, "Не прикреплен", null);
         }
-        String status = "Прикреплен (mock), " + uploadedDocument.uploadedAt().format(UPLOAD_TS_FORMAT);
+        String status = "Прикреплен, " + uploadedDocument.uploadedAt().format(UPLOAD_TS_FORMAT);
         String link = mockDocLink(username, uploadedDocument.fileName());
         return new MockDocumentRow(title, status, link);
     }

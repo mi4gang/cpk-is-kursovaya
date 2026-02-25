@@ -1,13 +1,10 @@
 # Скриншоты для README
 
-В этой папке хранятся визуальные материалы для публичного GitHub-репозитория.
+В этой папке хранятся актуальные скриншоты из работающего приложения.
 
 Текущий состав:
-- `dashboard-overview.svg`
-- `programs-list.svg`
-- `applications-list.svg`
-- `e2e-flow.svg`
-
-Примечание:
-- Сейчас это аккуратные SVG-заглушки.
-- Перед финальной защитой рекомендуется заменить их реальными скриншотами интерфейса из работающего приложения.
+- `home_public.png`
+- `student_cabinet.png`
+- `methodist_queue.png`
+- `teacher_cabinet.png`
+- `admin_dashboard_v2.png`
